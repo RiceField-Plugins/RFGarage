@@ -40,16 +40,11 @@ namespace VirtualGarage.Commands
                 }
                 case 1:
                 {
-                    Logger.LogError("1");
                     if (!CheckResponse(player, Garage.Parse(command[0])))
                         return;
-                    Logger.LogError("2");
                     var garage = Garage.Parse(command[0]);
-                    Logger.LogError("3");
                     var vgVehicles = Plugin.DbManager.ReadVgVehicleByGarageName(player.CSteamID.m_SteamID.ToString(), garage.Name);
-                    Logger.LogError("4");
                     var playerVgVehicles = vgVehicles as PlayerVgVehicle[] ?? vgVehicles.ToArray();
-                    Logger.LogError("5");
                     foreach (var vgVehicle in playerVgVehicles)
                     {
                         var vg = vgVehicle.Info.ToVgVehicle();
@@ -57,7 +52,6 @@ namespace VirtualGarage.Commands
                         var list = $"[Name] {vgVehicle.VehicleName}, [VName] {asset.vehicleName}, [ID] {asset.id}";
                         UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_glist_garage_success", garage.Name, list), Plugin.MsgColor);
                     }
-                    Logger.LogError("6");
 
                     return;
                 }

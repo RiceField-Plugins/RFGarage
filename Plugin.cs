@@ -47,7 +47,7 @@ namespace VirtualGarage
             VehicleManager.OnVehicleExploded += VehicleEvent.OnExploded;
             
             Logger.LogWarning("[VirtualGarage] Plugin loaded successfully!");
-            Logger.LogWarning("[VirtualGarage] VirtualGarage v1.0.0");
+            Logger.LogWarning("[VirtualGarage] VirtualGarage v1.0.1");
             Logger.LogWarning("[VirtualGarage] Author: BarehSolok#2548");
             Logger.LogWarning("[VirtualGarage] Enjoy the plugin! ;)");
         }
@@ -65,6 +65,7 @@ namespace VirtualGarage
             Conf = null;
             DbManager = null;
             
+            Level.onLevelLoaded -= OnLevelLoadedEvent;
             U.Events.OnPlayerConnected -= PlayerEvent.OnConnected;
             U.Events.OnPlayerDisconnected -= PlayerEvent.OnDisconnected;
             VehicleManager.OnVehicleExploded -= VehicleEvent.OnExploded;
@@ -84,7 +85,7 @@ namespace VirtualGarage
                 {"virtualgarage_command_gadd_all_no_queue", "[VirtualGarage] You don't have any related queue!"},
                 {"virtualgarage_command_gadd_all_success", "[VirtualGarage] Successfully added {0} vehicle(s) to your Garage(s)! Failed to add {1} vehicle(s)"},
                 {"virtualgarage_command_gadd_blacklist_barricade", "[VirtualGarage] You are not allowed to save barricade: {0} [{1}]!"},
-                {"virtualgarage_command_gadd_blacklist_barricade", "[VirtualGarage] You are not allowed to save trunk item: {0} [{1}]!"},
+                {"virtualgarage_command_gadd_blacklist_trunk_item", "[VirtualGarage] You are not allowed to save trunk item: {0} [{1}]!"},
                 {"virtualgarage_command_gadd_blacklist_vehicle", "[VirtualGarage] You are not allowed to save vehicle: {0} [{1}]!"},
                 {"virtualgarage_command_gadd_garage_full", "[VirtualGarage] {0} Garage is full!"},
                 {"virtualgarage_command_gadd_garage_not_selected", "[VirtualGarage] Please /gset <garageName> first! or use /gadd <garageName> <vehicleName>"},
