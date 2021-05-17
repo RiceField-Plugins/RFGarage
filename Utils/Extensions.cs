@@ -17,6 +17,11 @@ namespace VirtualGarage.Utils
             return Convert.FromBase64String(base64);
         }
         
+        public static string ToInfo(this VgVehicle vgVehicle)
+        {
+            var byteArray = vgVehicle.Serialize();
+            return byteArray.ToBase64();
+        }
         public static VgVehicle ToVgVehicle(this string info)
         {
             var byteArray = info.ToByteArray();

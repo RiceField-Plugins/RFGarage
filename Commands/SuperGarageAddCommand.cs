@@ -42,7 +42,7 @@ namespace VirtualGarage.Commands
                 case EResponseType.GARAGE_NOT_FOUND:
                     UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_not_found"), Plugin.MsgColor);
                     return false;
-                case EResponseType.INVALID_ID:
+                case EResponseType.INVALID_STEAMID:
                     UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_invalid_id"), Plugin.MsgColor);
                     return false;
                 case EResponseType.SAME_NAME_AS_GARAGE:

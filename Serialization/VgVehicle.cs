@@ -17,7 +17,7 @@ namespace VirtualGarage.Serialization
         public ushort Fuel { get; set; }
         public ushort BatteryCharge { get; set; }
         public bool[] Tires { get; set; }
-        public byte[][] Turrets { get; set; }
+        public List<byte[]> Turrets { get; set; }
         public List<VgItem> TrunkItems { get; set; } = new List<VgItem>();
         public List<VgBarricade> Barricades { get; set; } = new List<VgBarricade>();
 
@@ -27,9 +27,16 @@ namespace VirtualGarage.Serialization
         }
         public static VgVehicle Create(InteractableVehicle vehicle)
         {
-            var vehicleTurret = new byte[][] { };
-            for (byte index = 0; (int) index < vehicle.turrets.Length; ++index)
-                vehicleTurret[index] = vehicle.turrets[index].state;
+            var vehicleTurret = new List<byte[]>();
+            if (vehicle.turrets != null && vehicle.turrets?.Length != 0)
+            {
+                byte index = 0;
+                while (index < vehicle.turrets.Length)
+                {
+                    vehicleTurret.Add(vehicle.turrets[index].state);
+                    index++;
+                }
+            }
             
             var result = new VgVehicle
             {
@@ -85,41 +92,35 @@ namespace VirtualGarage.Serialization
             }
             
             // Set Turrets
-            if (Turrets != null && Turrets.Length == vehicle.turrets.Length)
+            if (vehicle.turrets != null && Turrets != null && Turrets.Count == vehicle.turrets.Length)
             {
-                byte b = 0;
-                while (b < vehicle.turrets.Length)
+                byte index = 0;
+                while (index < vehicle.turrets.Length)
                 {
-                    vehicle.turrets[b].state = Turrets[b];
-                    b += 1;
+                    vehicle.turrets[index].state = Turrets[index];
+                    index += 1;
                 }
             }
             else
             {
-                byte b2 = 0;
-                while (b2 < vehicle.turrets.Length)
+                byte index = 0;
+                while (index < vehicle.turrets?.Length)
                 {
                     var vehicleAsset = (VehicleAsset)Assets.find(EAssetType.VEHICLE, ID);
-                    var itemAsset = (ItemAsset)Assets.find(EAssetType.ITEM, vehicleAsset.turrets[b2].itemID);
+                    var itemAsset = (ItemAsset)Assets.find(EAssetType.ITEM, vehicleAsset.turrets[index].itemID);
                     if (itemAsset != null)
                     {
-                        vehicle.turrets[b2].state = itemAsset.getState();
+                        vehicle.turrets[index].state = itemAsset.getState();
                     }
                     else
                     {
-                        vehicle.turrets[b2].state = null;
+                        vehicle.turrets[index].state = null;
                     }
-                    b2 += 1;
+                    index += 1;
                 }
             }
             
             return vehicle;
-        }
-
-        public string ToInfo()
-        {
-            var byteArray = this.Serialize();
-            return byteArray.ToBase64();
         }
     }
 }

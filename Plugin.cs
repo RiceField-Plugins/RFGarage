@@ -47,7 +47,7 @@ namespace VirtualGarage
             VehicleManager.OnVehicleExploded += VehicleEvent.OnExploded;
             
             Logger.LogWarning("[VirtualGarage] Plugin loaded successfully!");
-            Logger.LogWarning("[VirtualGarage] VirtualGarage v1.0.1");
+            Logger.LogWarning("[VirtualGarage] VirtualGarage v1.0.2");
             Logger.LogWarning("[VirtualGarage] Author: BarehSolok#2548");
             Logger.LogWarning("[VirtualGarage] Enjoy the plugin! ;)");
         }
@@ -79,7 +79,7 @@ namespace VirtualGarage
                 {"virtualgarage_command_all_abort", "[VirtualGarage] The process has been aborted"},
                 {"virtualgarage_command_all_fail_vehicle", "[VirtualGarage] FAILED: [ID] {0}, [Name] {1}"},
                 {"virtualgarage_command_all_success_vehicle", "[VirtualGarage] SUCCESS: [ID] {0}, [Name] {1}"},
-                {"virtualgarage_command_gadd_all_ask_confirm", "[VirtualGarage] Are you sure you want to add all of your vehicles? /gaddall confirm | abort"},
+                {"virtualgarage_command_gadd_all_ask_confirm", "[VirtualGarage] Are you sure you want to add all of your vehicles? /gaall confirm | abort"},
                 {"virtualgarage_command_gadd_all_blacklist_vehicle", "[VirtualGarage] BLACKLIST: [ID] {0}, [Name] {1}"},
                 {"virtualgarage_command_gadd_all_confirm", "[VirtualGarage] Adding vehicles, please wait..."},
                 {"virtualgarage_command_gadd_all_no_queue", "[VirtualGarage] You don't have any related queue!"},

@@ -216,7 +216,7 @@ namespace VirtualGarage.Utils
             vehicleRegion = null;
             if (!ulong.TryParse(commands[0], out var steamID))
             {
-                responseType = EResponseType.INVALID_ID;
+                responseType = EResponseType.INVALID_STEAMID;
                 return;
             }
             if (Plugin.Conf.VirtualGarages.Any(g =>
@@ -240,7 +240,7 @@ namespace VirtualGarage.Utils
             
             if (!ulong.TryParse(commands[0], out var steamID))
             {
-                responseType = EResponseType.INVALID_ID;
+                responseType = EResponseType.INVALID_STEAMID;
                 return;
             }
             if (commands[1].ToLower() != "drown" && !GarageCheck(player, Garage.Parse(commands[1]), out responseType, isSuper: true))
@@ -258,7 +258,7 @@ namespace VirtualGarage.Utils
             
             if (!ulong.TryParse(steamID, out var value))
             {
-                responseType = EResponseType.INVALID_ID;
+                responseType = EResponseType.INVALID_STEAMID;
                 return;
             }
             if (UnturnedPlayer.FromName(steamID) == null)
@@ -291,7 +291,7 @@ namespace VirtualGarage.Utils
             }
             catch (Exception e)
             {
-                Rocket.Core.Logging.Logger.LogError("[VirtualGarage] LoadError: " + e);
+                Logger.LogError("[VirtualGarage] LoadError: " + e);
             }
         }
         public static void SaveVgVehicleToSql(ulong steamID, string garageName, string vehicleName, InteractableVehicle vehicle, BarricadeRegion vehicleRegion)
@@ -306,8 +306,8 @@ namespace VirtualGarage.Utils
                 }
                 if(BarricadeManager.tryGetPlant(vehicle.transform, out _, out _, out _, out var region))
                 {
-                    vehicle.trunkItems.items.Clear();
-                    region.barricades.Clear();
+                    vehicle.trunkItems?.items?.Clear();
+                    region.barricades?.Clear();
                     region.drops.Clear();
                 }
                 Plugin.DbManager.InsertVgVehicle(steamID.ToString(), garageName, vehicleName, info);
