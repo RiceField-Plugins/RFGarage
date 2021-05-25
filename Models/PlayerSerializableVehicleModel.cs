@@ -1,8 +1,8 @@
-﻿using VirtualGarage.Utils;
+﻿using RFGarage.Utils;
 
-namespace VirtualGarage.Models
+namespace RFGarage.Models
 {
-    public class PlayerVgVehicle
+    public class PlayerSerializableVehicleModel
     {
         public ulong EntryID;
         public ulong SteamID;
@@ -10,9 +10,9 @@ namespace VirtualGarage.Models
         public string VehicleName;
         public string Info;
         
-        public PlayerVgVehicle() { }
+        public PlayerSerializableVehicleModel() { }
 
-        public PlayerVgVehicle(ulong entryID, ulong steamID, string garageName, string vehicleName, string info)
+        public PlayerSerializableVehicleModel(ulong entryID, ulong steamID, string garageName, string vehicleName, string info)
         {
             EntryID = entryID;
             SteamID = steamID;

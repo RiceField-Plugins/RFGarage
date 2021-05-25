@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using RFGarage.Models;
 using Rocket.API;
 using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
-using VirtualGarage.Models;
-using VirtualGarage.Utils;
+using RFGarage.Utils;
 
-namespace VirtualGarage.Commands
+namespace RFGarage.Commands
 {
     public class GarageSetCommand : IRocketCommand
     {
@@ -19,19 +19,19 @@ namespace VirtualGarage.Commands
         {
             if (command.Length != 1)
             {
-                UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_invalid_parameter", Syntax), Plugin.MsgColor);
+                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_invalid_parameter", Syntax), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                 return;
             }
 
             var player = (UnturnedPlayer) caller;
-            if (!Garage.TryParse(command[0], out var garage))
+            if (!GarageModel.TryParse(command[0], out var garage))
             {
-                UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_garage_not_found"), Plugin.MsgColor);
+                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_garage_not_found"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                 return;
             }
-            if (!player.HasPermission(garage.Permission))
+            if (!player.CheckPermission(garage.Permission))
             {
-                UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_garage_no_permission", garage.Name, garage.Permission), Plugin.MsgColor);
+                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_garage_no_permission", garage.Name, garage.Permission), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                 return;
             }
 
@@ -39,7 +39,7 @@ namespace VirtualGarage.Commands
                 Plugin.SelectedGarageDict.Add(player.CSteamID, garage);
             else
                 Plugin.SelectedGarageDict[player.CSteamID] = garage;
-            UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gset_success", garage.Name), Plugin.MsgColor);
+            caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_gset_success", garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
         }
     }
 }

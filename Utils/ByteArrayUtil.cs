@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace VirtualGarage.Utils
+namespace RFGarage.Utils
 {
-    public static class ByteArraySerializer
+    public static class ByteArrayUtil
     {
         public static byte[] Serialize<T>(this T m)
         {

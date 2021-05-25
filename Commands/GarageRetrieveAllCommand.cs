@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using RFGarage.Enums;
+using RFGarage.Models;
+using RFGarage.Utils;
 using Rocket.API;
 using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
 using UnityEngine;
-using VirtualGarage.Enums;
-using VirtualGarage.Models;
-using VirtualGarage.Utils;
 
-namespace VirtualGarage.Commands
+namespace RFGarage.Commands
 {
     public class GarageRetrieveAllCommand : IRocketCommand
     {
@@ -84,7 +84,7 @@ namespace VirtualGarage.Commands
                             return;
                         }
                         case "abort":
-                            Plugin.GarageRetrieveAllQueueDict[player.CSteamID] = new List<PlayerVgVehicle>();
+                            Plugin.GarageRetrieveAllQueueDict[player.CSteamID] = new List<PlayerSerializableVehicleModel>();
                     
                             UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_all_abort"), Plugin.MsgColor);
                             return;
@@ -98,7 +98,7 @@ namespace VirtualGarage.Commands
                 
                     if (!CheckResponse(player, command))
                         return;
-                    var garage = Garage.Parse(command[0]);
+                    var garage = GarageModel.Parse(command[0]);
                     var vgVehicles = Plugin.DbManager.ReadVgVehicleByGarageName(player.CSteamID.m_SteamID.ToString(), garage.Name);
                     Plugin.GarageRetrieveAllQueueDict[player.CSteamID] = vgVehicles;
                     UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gr_all_ask_confirm"), Plugin.MsgColor);
@@ -110,19 +110,19 @@ namespace VirtualGarage.Commands
         private static bool CheckResponse(UnturnedPlayer player, string[] commands)
         {
             GarageUtil.GarageRetrieveAllChecks(player, out var responseType, commands);
-            Garage garage;
+            GarageModel garageModel;
             switch (responseType)
             {
                 case EResponseType.DONT_HAVE_VEHICLE:
-                    garage = Garage.Parse(commands?[0]);
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_no_vehicle", garage.Name), Plugin.MsgColor);
+                    garageModel = GarageModel.Parse(commands?[0]);
+                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_no_vehicle", garageModel.Name), Plugin.MsgColor);
                     return false;
                 case EResponseType.GARAGE_NOT_FOUND:
                     UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_not_found"), Plugin.MsgColor);
                     return false;
                 case EResponseType.GARAGE_NO_PERMISSION:
-                    garage = Garage.Parse(commands?[0]);
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_no_permission", garage.Name, garage.Permission), Plugin.MsgColor);
+                    garageModel = GarageModel.Parse(commands?[0]);
+                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_no_permission", garageModel.Name, garageModel.Permission), Plugin.MsgColor);
                     return false;
                 case EResponseType.SUCCESS:
                     return true;

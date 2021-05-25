@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RFGarage.Enums;
+using RFGarage.Models;
+using RFGarage.Utils;
 using Rocket.API;
 using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
-using VirtualGarage.Enums;
-using VirtualGarage.Models;
-using VirtualGarage.Utils;
 
-namespace VirtualGarage.Commands
+namespace RFGarage.Commands
 {
     public class GarageAddAllCommand : IRocketCommand
     {
@@ -23,7 +23,7 @@ namespace VirtualGarage.Commands
         {
             if (command.Length > 1)
             {
-                UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_invalid_parameter", Syntax), Plugin.MsgColor);
+                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_invalid_parameter", Syntax), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                 return;
             }
             
@@ -33,17 +33,17 @@ namespace VirtualGarage.Commands
                 case 0:
                     Plugin.GarageAddAllQueueDict[player.CSteamID] = true;
                 
-                    UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gadd_all_ask_confirm"), Plugin.MsgColor);
+                    caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_gadd_all_ask_confirm"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return;
                 case 1:
                     switch (command[0].ToLower())
                     {
                         case "confirm" when !Plugin.GarageAddAllQueueDict[player.CSteamID]:
-                            UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_all_no_queue"), Plugin.MsgColor);
+                            caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_all_no_queue"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                             return;
                         case "confirm":
                         {
-                            UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gadd_all_confirm"), Plugin.MsgColor);
+                            caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_gadd_all_confirm"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                             // Tuple < availableGarage, availableSlot >
                             var passedVehicles = new List<InteractableVehicle>();
                             var blacklistedVehicles = new List<InteractableVehicle>();
@@ -66,7 +66,7 @@ namespace VirtualGarage.Commands
                                 }
                             }
 
-                            var tupleGarages = (from garage in availableGarages let garageOccupiedSlot = Plugin.DbManager.GetVehicleCount(player.CSteamID.m_SteamID.ToString(), garage.Name) where garage.Slot > garageOccupiedSlot select new Tuple<Garage, uint>(garage, garageOccupiedSlot)).ToList();
+                            var tupleGarages = (from garage in availableGarages let garageOccupiedSlot = Plugin.DbManager.GetVehicleCount(player.CSteamID.m_SteamID.ToString(), garage.Name) where garage.Slot > garageOccupiedSlot select new Tuple<GarageModel, uint>(garage, garageOccupiedSlot)).ToList();
                             var vehicleIndex = 0;
                             var successVehicles = new List<InteractableVehicle>();
                             foreach (var (garage, occupiedSlot) in tupleGarages)
@@ -83,30 +83,30 @@ namespace VirtualGarage.Commands
                                 }
                             }
 
-                            UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gadd_all_success", 
-                                vehicleIndex, passedVehicles.Count - vehicleIndex), Plugin.MsgColor);
+                            caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_gadd_all_success", 
+                                vehicleIndex, passedVehicles.Count - vehicleIndex), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                             foreach (var vehicle in successVehicles)
                             {
-                                UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_all_success_vehicle", 
-                                    vehicle.asset.id, vehicle.asset.vehicleName), Plugin.MsgColor);
+                                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_all_success_vehicle", 
+                                    vehicle.asset.id, vehicle.asset.vehicleName), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                             }
                             foreach (var vehicle in blacklistedVehicles)
                             {
-                                UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gadd_all_blacklist_vehicle", 
-                                    vehicle.asset.id, vehicle.asset.vehicleName), Plugin.MsgColor);
+                                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_gadd_all_blacklist_vehicle", 
+                                    vehicle.asset.id, vehicle.asset.vehicleName), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                             }
                             passedVehicles.RemoveRange(0, vehicleIndex);
                             foreach (var vehicle in passedVehicles)
                             {
-                                UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_all_fail_vehicle", 
-                                    vehicle.asset.id, vehicle.asset.vehicleName), Plugin.MsgColor);
+                                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_all_fail_vehicle", 
+                                    vehicle.asset.id, vehicle.asset.vehicleName), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                             }
                             return;
                         }
                         case "abort":
                             Plugin.GarageAddAllQueueDict[player.CSteamID] = false;
                     
-                            UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_all_abort"), Plugin.MsgColor);
+                            caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_all_abort"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                             return;
                     }
 

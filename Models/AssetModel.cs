@@ -1,17 +1,17 @@
 ﻿using System.Xml.Serialization;
 
-namespace VirtualGarage.Models
+namespace RFGarage.Models
 {
-    public class AssetID
+    public class AssetModel
     {
         [XmlAttribute]
         public ushort ID;
 
-        public AssetID()
+        public AssetModel()
         {
             
         }
-        public AssetID(ushort id)
+        public AssetModel(ushort id)
         {
             ID = id;
         }

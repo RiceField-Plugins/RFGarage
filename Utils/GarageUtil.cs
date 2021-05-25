@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RFGarage.Enums;
+using RFGarage.Models;
+using RFGarage.Serialization;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
 using UnityEngine;
-using VirtualGarage.Enums;
-using VirtualGarage.Models;
-using VirtualGarage.Serialization;
 using Logger = Rocket.Core.Logging.Logger;
 
-namespace VirtualGarage.Utils
+namespace RFGarage.Utils
 {
     public static class GarageUtil
     {
-        public static List<Garage> GetAllGarages(UnturnedPlayer player)
+        public static List<GarageModel> GetAllGarages(UnturnedPlayer player)
         {
-            return Plugin.Conf.VirtualGarages.Where(garage => player.HasPermission(garage.Permission)).ToList();
+            return Plugin.Conf.VirtualGarages.Where(garage => player.CheckPermission(garage.Permission)).ToList();
         }
-        public static Garage GetFirstGarage(UnturnedPlayer player)
+        public static GarageModel GetFirstGarage(UnturnedPlayer player)
         {
-            return Plugin.Conf.VirtualGarages.FirstOrDefault(garage => player.HasPermission(garage.Permission));
+            return Plugin.Conf.VirtualGarages.FirstOrDefault(garage => player.CheckPermission(garage.Permission));
         }
         
         private static bool BlacklistCheck(UnturnedPlayer player, InteractableVehicle vehicle, out EResponseType responseType, out ushort blacklistedID)
@@ -28,14 +28,14 @@ namespace VirtualGarage.Utils
             responseType = EResponseType.SUCCESS;
             
             if (Plugin.Conf.BlacklistedVehicles.Any(blacklist => blacklist.Assets.Any(asset =>
-                vehicle.id == asset.ID && !player.HasPermission(blacklist.BypassPermission))))
+                vehicle.id == asset.ID && !player.CheckPermission(blacklist.BypassPermission))))
             {
                 responseType = EResponseType.BLACKLIST_VEHICLE;
                 blacklistedID = vehicle.id;
                 return false;
             }
             if (vehicle.trunkItems != null && (vehicle.trunkItems != null || vehicle.trunkItems.items.Count != 0))
-                foreach (var item in Plugin.Conf.BlacklistedTrunkItems.SelectMany(blacklist => blacklist.Assets.SelectMany(asset => vehicle.trunkItems.items.Where(item => item.item.id == asset.ID && !player.HasPermission(blacklist.BypassPermission)))))
+                foreach (var item in Plugin.Conf.BlacklistedTrunkItems.SelectMany(blacklist => blacklist.Assets.SelectMany(asset => vehicle.trunkItems.items.Where(item => item.item.id == asset.ID && !player.CheckPermission(blacklist.BypassPermission)))))
                 {
                     responseType = EResponseType.BLACKLIST_TRUNK_ITEM;
                     blacklistedID = item.item.id;
@@ -43,7 +43,7 @@ namespace VirtualGarage.Utils
                 }
             if (BarricadeManager.tryGetPlant(vehicle.transform, out _, out _, out _, out var region) && region.barricades != null && region.barricades.Count != 0)
                 foreach (var asset in Plugin.Conf.BlacklistedBarricades.SelectMany(blacklist => blacklist.Assets.Where(asset => region.drops.Any(drop =>
-                    drop.asset.id == asset.ID && !player.HasPermission(blacklist.BypassPermission)))))
+                    drop.asset.id == asset.ID && !player.CheckPermission(blacklist.BypassPermission)))))
                 {
                     responseType = EResponseType.BLACKLIST_BARRICADE;
                     blacklistedID = asset.ID;
@@ -52,20 +52,20 @@ namespace VirtualGarage.Utils
 
             return true;
         }
-        public static bool GarageCheck(UnturnedPlayer player, Garage garage, out EResponseType responseType, bool isRetrieveOrList = false, bool isSuper = false)
+        public static bool GarageCheck(UnturnedPlayer player, GarageModel garageModel, out EResponseType responseType, bool isRetrieveOrList = false, bool isSuper = false)
         {
-            if (garage == null)
+            if (garageModel == null)
             {
                 responseType = EResponseType.GARAGE_NOT_FOUND;
                 return false;
             }
-            if (!isSuper && !player.HasPermission(garage.Permission))
+            if (!isSuper && !player.CheckPermission(garageModel.Permission))
             {
                 responseType = EResponseType.GARAGE_NO_PERMISSION;
                 return false;
             }
             if (!isRetrieveOrList && !isSuper)
-                if (!Plugin.DbManager.IsGarageFull(player.CSteamID.m_SteamID.ToString(), garage))
+                if (!Plugin.DbManager.IsGarageFull(player.CSteamID.m_SteamID.ToString(), garageModel))
                 {
                     responseType = EResponseType.GARAGE_FULL;
                     return false;
@@ -150,7 +150,7 @@ namespace VirtualGarage.Utils
                         responseType = EResponseType.VEHICLE_NOT_OWNER;
                         return;
                     }
-                    if (!GarageCheck(player, Garage.Parse(commands[0]), out responseType))
+                    if (!GarageCheck(player, GarageModel.Parse(commands[0]), out responseType))
                     {
                         return;
                     }
@@ -186,11 +186,11 @@ namespace VirtualGarage.Utils
                     }
                     break;
                 case false:
-                    if (!GarageCheck(player, Garage.Parse(commands[0]), out responseType, true))
+                    if (!GarageCheck(player, GarageModel.Parse(commands[0]), out responseType, true))
                     {
                         return;
                     }
-                    if (!Plugin.DbManager.IsVehicleExist(player.CSteamID.m_SteamID.ToString(), Garage.Parse(commands[0]).Name, commands[1]))
+                    if (!Plugin.DbManager.IsVehicleExist(player.CSteamID.m_SteamID.ToString(), GarageModel.Parse(commands[0]).Name, commands[1]))
                     {
                         responseType = EResponseType.DONT_HAVE_VEHICLE;
                     }
@@ -200,11 +200,11 @@ namespace VirtualGarage.Utils
         public static void GarageRetrieveAllChecks(UnturnedPlayer player, out EResponseType responseType, string[] commands)
         {
             responseType = EResponseType.SUCCESS;
-            if (!GarageCheck(player, Garage.Parse(commands[0]), out responseType, true))
+            if (!GarageCheck(player, GarageModel.Parse(commands[0]), out responseType, true))
             {
                 return;
             }
-            if (!Plugin.DbManager.IsVehicleExist(player.CSteamID.m_SteamID.ToString(), Garage.Parse(commands[0]).Name))
+            if (!Plugin.DbManager.IsVehicleExist(player.CSteamID.m_SteamID.ToString(), GarageModel.Parse(commands[0]).Name))
             {
                 responseType = EResponseType.DONT_HAVE_VEHICLE;
             }
@@ -216,7 +216,7 @@ namespace VirtualGarage.Utils
             vehicleRegion = null;
             if (!ulong.TryParse(commands[0], out var steamID))
             {
-                responseType = EResponseType.INVALID_STEAMID;
+                responseType = EResponseType.INVALID_STEAM_ID;
                 return;
             }
             if (Plugin.Conf.VirtualGarages.Any(g =>
@@ -230,7 +230,7 @@ namespace VirtualGarage.Utils
                 responseType = EResponseType.VEHICLE_NOT_FOUND;
                 return;
             }
-            if (!GarageCheck(player, Garage.Parse(commands[1]), out responseType, isSuper: true))
+            if (!GarageCheck(player, GarageModel.Parse(commands[1]), out responseType, isSuper: true))
             {
             }
         }
@@ -240,25 +240,25 @@ namespace VirtualGarage.Utils
             
             if (!ulong.TryParse(commands[0], out var steamID))
             {
-                responseType = EResponseType.INVALID_STEAMID;
+                responseType = EResponseType.INVALID_STEAM_ID;
                 return;
             }
-            if (commands[1].ToLower() != "drown" && !GarageCheck(player, Garage.Parse(commands[1]), out responseType, isSuper: true))
+            if (commands[1].ToLower() != "drown" && !GarageCheck(player, GarageModel.Parse(commands[1]), out responseType, isSuper: true))
             {
                 return;
             }
-            if (!Plugin.DbManager.IsVehicleExist(commands[0], commands[1].ToLower() != "drown" ? Garage.Parse(commands[1]).Name : "Drown", commands[2]))
+            if (!Plugin.DbManager.IsVehicleExist(commands[0], commands[1].ToLower() != "drown" ? GarageModel.Parse(commands[1]).Name : "Drown", commands[2]))
             {
                 responseType = EResponseType.DONT_HAVE_VEHICLE;
             }
         }
-        public static void SuperGarageListCheck(UnturnedPlayer player, string steamID, Garage garage, out EResponseType responseType, bool noGarage = false)
+        public static void SuperGarageListCheck(UnturnedPlayer player, string steamID, GarageModel garageModel, out EResponseType responseType, bool noGarage = false)
         {
             responseType = EResponseType.SUCCESS;
             
             if (!ulong.TryParse(steamID, out var value))
             {
-                responseType = EResponseType.INVALID_STEAMID;
+                responseType = EResponseType.INVALID_STEAM_ID;
                 return;
             }
             if (UnturnedPlayer.FromName(steamID) == null)
@@ -266,7 +266,7 @@ namespace VirtualGarage.Utils
                 responseType = EResponseType.PLAYER_NOT_ONLINE;
                 return;
             }
-            if (!noGarage && !GarageCheck(player, garage, out responseType, isSuper: true))
+            if (!noGarage && !GarageCheck(player, garageModel, out responseType, isSuper: true))
             {
                 return;
             }
@@ -291,14 +291,14 @@ namespace VirtualGarage.Utils
             }
             catch (Exception e)
             {
-                Logger.LogError("[VirtualGarage] LoadError: " + e);
+                Logger.LogError("[RFGarage] LoadError: " + e);
             }
         }
         public static void SaveVgVehicleToSql(ulong steamID, string garageName, string vehicleName, InteractableVehicle vehicle, BarricadeRegion vehicleRegion)
         {
             try
             {
-                var info = VgVehicle.Create(vehicle).ToInfo();
+                var info = SerializableVehicle.Create(vehicle).ToInfo();
                 foreach (var currentPlayer in vehicle.passengers.Where(c => c.player != null))
                 {
                     vehicle.forceRemovePlayer(out var seat, currentPlayer.player.playerID.steamID, out var point, out var angle);
@@ -315,13 +315,8 @@ namespace VirtualGarage.Utils
             }
             catch (Exception e)
             {
-                Logger.LogError("[VirtualGarage] SaveError: " + e);
+                Logger.LogError("[RFGarage] SaveError: " + e);
             }
-        }
-
-        public static void SaveAllVehicle()
-        {
-            
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace VirtualGarage.Enums
+﻿namespace RFGarage.Enums
 {
     public enum EResponseType
     {
@@ -10,7 +10,7 @@
         GARAGE_NOT_FOUND,
         GARAGE_NOT_SELECTED,
         GARAGE_NO_PERMISSION,
-        INVALID_STEAMID,
+        INVALID_STEAM_ID,
         PLAYER_NOT_ONLINE,
         VEHICLE_NOT_FOUND,
         VEHICLE_NOT_OWNER,

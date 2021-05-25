@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Linq;
+using RFGarage.Serialization;
+using Rocket.API;
 using Rocket.Core;
 using Rocket.Unturned.Player;
-using VirtualGarage.Serialization;
+using SDG.Unturned;
+using Steamworks;
+using UnityEngine;
 
-namespace VirtualGarage.Utils
+namespace RFGarage.Utils
 {
     public static class Extensions
     {
@@ -17,26 +21,33 @@ namespace VirtualGarage.Utils
             return Convert.FromBase64String(base64);
         }
         
-        public static string ToInfo(this VgVehicle vgVehicle)
+        public static string ToInfo(this SerializableVehicle serializableVehicle)
         {
-            var byteArray = vgVehicle.Serialize();
+            var byteArray = serializableVehicle.Serialize();
             return byteArray.ToBase64();
         }
-        public static VgVehicle ToVgVehicle(this string info)
+        public static SerializableVehicle ToVgVehicle(this string info)
         {
             var byteArray = info.ToByteArray();
-            return byteArray.Deserialize<VgVehicle>();
+            return byteArray.Deserialize<SerializableVehicle>();
         }
         
-        public static bool HasPermission(this UnturnedPlayer player, string permission)
+        public static bool CheckPermission(this UnturnedPlayer player, string permission)
         {
-            return R.Permissions.GetPermissions(player).Any(p =>
-                string.Equals(p.Name, permission, StringComparison.CurrentCultureIgnoreCase) || player.IsAdminOrAsterisk());
+            return player.HasPermission(permission) || player.IsAdminOrAsterisk();
         }
         public static bool IsAdminOrAsterisk(this UnturnedPlayer player)
         {
-            return R.Permissions.GetPermissions(player).Any(p =>
-                string.Equals(p.Name, "*", StringComparison.CurrentCultureIgnoreCase) || player.IsAdmin);
+            return player.HasPermission("*") || player.IsAdmin;
+        }
+        
+        public static void SendChat(this UnturnedPlayer player, string text, Color color, string iconURL = null)
+        {
+            ChatManager.serverSendMessage(text, color, null, player.SteamPlayer(), EChatMode.SAY, iconURL, true);
+        }
+        public static void SendChat(this IRocketPlayer player, string text, Color color, string iconURL = null)
+        {
+            ChatManager.serverSendMessage(text, color, null, PlayerTool.getSteamPlayer(new CSteamID(ulong.Parse(player.Id))), EChatMode.SAY, iconURL, true);
         }
     }
 }

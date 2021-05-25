@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace VirtualGarage.Serialization
+namespace RFGarage.Serialization
 {
     // Big thanks to AdamAdam
     [Serializable]
-    public struct ItemPosition
+    public struct SerializableItemPosition
     {
         public byte Page { get; set; }
         public byte X { get; set; }

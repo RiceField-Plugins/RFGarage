@@ -4,13 +4,13 @@ using System.Linq;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
 using UnityEngine;
-using VirtualGarage.Utils;
+using RFGarage.Utils;
 
-namespace VirtualGarage.Serialization
+namespace RFGarage.Serialization
 {
     // Big thanks to AdamAdam
     [Serializable]
-    public class VgVehicle
+    public class SerializableVehicle
     {
         public ushort ID { get; set; }
         public ushort Health { get; set; }
@@ -18,14 +18,14 @@ namespace VirtualGarage.Serialization
         public ushort BatteryCharge { get; set; }
         public bool[] Tires { get; set; }
         public List<byte[]> Turrets { get; set; }
-        public List<VgItem> TrunkItems { get; set; } = new List<VgItem>();
-        public List<VgBarricade> Barricades { get; set; } = new List<VgBarricade>();
+        public List<SerializableItem> TrunkItems { get; set; } = new List<SerializableItem>();
+        public List<SerializableBarricade> Barricades { get; set; } = new List<SerializableBarricade>();
 
-        public VgVehicle()
+        public SerializableVehicle()
         {
             
         }
-        public static VgVehicle Create(InteractableVehicle vehicle)
+        public static SerializableVehicle Create(InteractableVehicle vehicle)
         {
             var vehicleTurret = new List<byte[]>();
             if (vehicle.turrets != null && vehicle.turrets?.Length != 0)
@@ -38,22 +38,22 @@ namespace VirtualGarage.Serialization
                 }
             }
             
-            var result = new VgVehicle
+            var result = new SerializableVehicle
             {
                 Health = vehicle.health,
                 Fuel = vehicle.fuel,
                 BatteryCharge = vehicle.batteryCharge,
                 ID = vehicle.id,
                 TrunkItems =
-                    vehicle.trunkItems?.items?.Select(c => VgItem.Create(vehicle.trunkItems.page, c)).ToList() ??
-                    new List<VgItem>(),
+                    vehicle.trunkItems?.items?.Select(c => SerializableItem.Create(vehicle.trunkItems.page, c)).ToList() ??
+                    new List<SerializableItem>(),
                 Tires = vehicle.tires?.Select(c => c.isAlive)?.ToArray() ?? new bool[0],
                 Turrets = vehicleTurret
             };
             
             if (BarricadeManager.tryGetPlant(vehicle.transform, out _, out _, out _, out var region))
             {
-                foreach (var barricade in from data in region.barricades where !data.barricade.isDead let drop = region.drops.FirstOrDefault(c => c.instanceID == data.instanceID) select VgBarricade.Create(drop, data))
+                foreach (var barricade in from data in region.barricades where !data.barricade.isDead let drop = region.drops.FirstOrDefault(c => c.instanceID == data.instanceID) select SerializableBarricade.Create(drop, data))
                 {
                     result.Barricades.Add(barricade);
                 }

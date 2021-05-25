@@ -1,26 +1,26 @@
 ﻿using System;
 using SDG.Unturned;
-using VirtualGarage.Models;
+using RFGarage.Models;
 
-namespace VirtualGarage.Serialization
+namespace RFGarage.Serialization
 {
     // Big thanks to AdamAdam
     [Serializable]
-    public class VgItem
+    public class SerializableItem
     {
         public ushort ID { get; set; }
         public byte Amount { get; set; }
         public byte Quality { get; set; }
         public byte[] State { get; set; }
-        public ItemPosition? Position { get; set; }
+        public SerializableItemPosition? Position { get; set; }
 
-        public VgItem()
+        public SerializableItem()
         {
             
         }
-        public static VgItem Create(Item item)
+        public static SerializableItem Create(Item item)
         {
-            return new VgItem
+            return new SerializableItem
             {
                 ID = item.id,
                 Amount = item.amount,
@@ -28,10 +28,10 @@ namespace VirtualGarage.Serialization
                 State = item.state,
             };
         }
-        public static VgItem Create(byte page, ItemJar item)
+        public static SerializableItem Create(byte page, ItemJar item)
         {
             var result = Create(item.item);
-            result.Position = new ItemPosition
+            result.Position = new SerializableItemPosition
             {
                 Page = page,
                 Rot = item.rot,

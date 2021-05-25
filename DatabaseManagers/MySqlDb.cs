@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using I18N.West;
 using MySql.Data.MySqlClient;
+using RFGarage.Models;
 using Rocket.Core.Logging;
-using VirtualGarage.Models;
 
-namespace VirtualGarage.DatabaseManagers
+namespace RFGarage.DatabaseManagers
 {
     public class MySqlDb
     {
@@ -53,7 +53,7 @@ namespace VirtualGarage.DatabaseManagers
             }
             catch (Exception ex)
             {
-                Logger.LogError("[VirtualGarage] DbError: " + ex);
+                Logger.LogError("[RFGarage] DbError: " + ex);
             }
 
             return connection;
@@ -118,7 +118,7 @@ namespace VirtualGarage.DatabaseManagers
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogError("[VirtualGarage] DbError: " + ex);
+                    Logger.LogError("[RFGarage] DbError: " + ex);
                 }
                 finally
                 {
@@ -196,13 +196,13 @@ namespace VirtualGarage.DatabaseManagers
 
             return scalar != null;
         }
-        public bool IsGarageFull(string steamID, Garage garage)
+        public bool IsGarageFull(string steamID, GarageModel garageModel)
         {
             var readerResult = (List<Row>)ExecuteQuery(EQueryType.Reader,
                 $"SELECT * FROM `{TableName}` WHERE SteamID = @steamID AND GarageName = @garageName;",
-                new MySqlParameter("@steamID", steamID), new MySqlParameter("@garageName", garage.Name));
+                new MySqlParameter("@steamID", steamID), new MySqlParameter("@garageName", garageModel.Name));
 
-            return readerResult.Count < garage.Slot;
+            return readerResult.Count < garageModel.Slot;
         }
         public void InsertVgVehicle(string steamID, string garageName, string vehicleName, string info)
         {
@@ -217,14 +217,14 @@ namespace VirtualGarage.DatabaseManagers
 
             return readerResult;
         }
-        public PlayerVgVehicle ReadVgVehicleByVehicleName(string steamID, string garageName, string vehicleName)
+        public PlayerSerializableVehicleModel ReadVgVehicleByVehicleName(string steamID, string garageName, string vehicleName)
         {
             var readerResult = (List<Row>)ExecuteQuery(EQueryType.Reader,
                 $"SELECT * FROM `{TableName}` WHERE SteamID = @steamID AND GarageName = @garageName AND VehicleName = @vehicleName;",
                 new MySqlParameter("@steamID", steamID), new MySqlParameter("@garageName", garageName),
                 new MySqlParameter("@vehicleName", vehicleName));
 
-            return readerResult?.Select(r => new PlayerVgVehicle
+            return readerResult?.Select(r => new PlayerSerializableVehicleModel
             {
                 EntryID = ulong.Parse(r.Values["EntryID"].ToString()),
                 SteamID = ulong.Parse(r.Values["SteamID"].ToString()),
@@ -233,13 +233,13 @@ namespace VirtualGarage.DatabaseManagers
                 Info = r.Values["Info"].ToString(),
             }).FirstOrDefault();
         }
-        public IEnumerable<PlayerVgVehicle> ReadVgVehicleByGarageName(string steamID, string garageName)
+        public IEnumerable<PlayerSerializableVehicleModel> ReadVgVehicleByGarageName(string steamID, string garageName)
         {
             var readerResult = (List<Row>)ExecuteQuery(EQueryType.Reader,
                 $"SELECT * FROM `{TableName}` WHERE SteamID = @steamID AND GarageName = @garageName;",
                 new MySqlParameter("@steamID", steamID), new MySqlParameter("@garageName", garageName));
 
-            return readerResult?.Select(r => new PlayerVgVehicle
+            return readerResult?.Select(r => new PlayerSerializableVehicleModel
             {
                 EntryID = ulong.Parse(r.Values["EntryID"].ToString()),
                 SteamID = ulong.Parse(r.Values["SteamID"].ToString()),
@@ -248,13 +248,13 @@ namespace VirtualGarage.DatabaseManagers
                 Info = r.Values["Info"].ToString(),
             });
         }
-        public IEnumerable<PlayerVgVehicle> ReadVgVehicleAllWithoutDrown(string steamID)
+        public IEnumerable<PlayerSerializableVehicleModel> ReadVgVehicleAllWithoutDrown(string steamID)
         {
             var readerResult = (List<Row>)ExecuteQuery(EQueryType.Reader,
                 $"SELECT * FROM `{TableName}` WHERE SteamID = @steamID AND GarageName <> 'Drown';",
                 new MySqlParameter("@steamID", steamID));
 
-            return readerResult?.Select(r => new PlayerVgVehicle
+            return readerResult?.Select(r => new PlayerSerializableVehicleModel
             {
                 EntryID = ulong.Parse(r.Values["EntryID"].ToString()),
                 SteamID = ulong.Parse(r.Values["SteamID"].ToString()),

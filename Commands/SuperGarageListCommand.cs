@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RFGarage.Enums;
+using RFGarage.Models;
+using RFGarage.Utils;
 using Rocket.API;
 using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
-using VirtualGarage.Enums;
-using VirtualGarage.Models;
-using VirtualGarage.Utils;
 
-namespace VirtualGarage.Commands
+namespace RFGarage.Commands
 {
     public class SuperGarageListCommand : IRocketCommand
     {
@@ -42,13 +42,13 @@ namespace VirtualGarage.Commands
                     UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_glist_garages_success", list), Plugin.MsgColor);
                     return;
                 }
-                case 2 when !CheckResponse(player, command[0], Garage.Parse(command[1])):
+                case 2 when !CheckResponse(player, command[0], GarageModel.Parse(command[1])):
                     return;
                 case 2:
                 {
-                    var garage = Garage.Parse(command[1]);
+                    var garage = GarageModel.Parse(command[1]);
                     var vgVehicles = Plugin.DbManager.ReadVgVehicleByGarageName(command[0], garage.Name);
-                    var playerVgVehicles = vgVehicles as PlayerVgVehicle[] ?? vgVehicles.ToArray();
+                    var playerVgVehicles = vgVehicles as PlayerSerializableVehicleModel[] ?? vgVehicles.ToArray();
                     foreach (var vgVehicle in playerVgVehicles)
                     {
                         var vg = vgVehicle.Info.ToVgVehicle();
@@ -62,15 +62,15 @@ namespace VirtualGarage.Commands
             }
         }
 
-        private static bool CheckResponse(UnturnedPlayer player, string steamID, Garage garage)
+        private static bool CheckResponse(UnturnedPlayer player, string steamID, GarageModel garageModel)
         {
-            GarageUtil.SuperGarageListCheck(player, steamID, garage, out var responseType, garage == null);
+            GarageUtil.SuperGarageListCheck(player, steamID, garageModel, out var responseType, garageModel == null);
             switch (responseType)
             {
                 case EResponseType.GARAGE_NOT_FOUND:
                     UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_not_found"), Plugin.MsgColor);
                     return false;
-                case EResponseType.INVALID_STEAMID:
+                case EResponseType.INVALID_STEAM_ID:
                     UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_invalid_id"), Plugin.MsgColor);
                     return false;
                 case EResponseType.PLAYER_NOT_ONLINE:

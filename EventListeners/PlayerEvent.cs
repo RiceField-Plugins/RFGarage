@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
+using RFGarage.Models;
+using RFGarage.Utils;
 using Rocket.Unturned.Player;
-using VirtualGarage.Models;
-using VirtualGarage.Utils;
 
-namespace VirtualGarage.EventListeners
+namespace RFGarage.EventListeners
 {
     public static class PlayerEvent
     {
@@ -16,7 +16,7 @@ namespace VirtualGarage.EventListeners
                 Plugin.GarageAddAllQueueDict.Add(player.CSteamID, false);
             
             if (!Plugin.GarageRetrieveAllQueueDict.ContainsKey(player.CSteamID))
-                Plugin.GarageRetrieveAllQueueDict.Add(player.CSteamID, new List<PlayerVgVehicle>());
+                Plugin.GarageRetrieveAllQueueDict.Add(player.CSteamID, new List<PlayerSerializableVehicleModel>());
         }
         public static void OnDisconnected(UnturnedPlayer player)
         {
@@ -24,7 +24,7 @@ namespace VirtualGarage.EventListeners
                 Plugin.GarageAddAllQueueDict[player.CSteamID] = false;
 
             if (!Plugin.GarageRetrieveAllQueueDict.ContainsKey(player.CSteamID))
-                Plugin.GarageRetrieveAllQueueDict[player.CSteamID] = new List<PlayerVgVehicle>();
+                Plugin.GarageRetrieveAllQueueDict[player.CSteamID] = new List<PlayerSerializableVehicleModel>();
         }
     }
 }

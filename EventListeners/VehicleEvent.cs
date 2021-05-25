@@ -1,6 +1,6 @@
 ﻿using SDG.Unturned;
 
-namespace VirtualGarage.EventListeners
+namespace RFGarage.EventListeners
 {
     public static class VehicleEvent
     {

@@ -1,17 +1,17 @@
 ﻿using System;
 using UnityEngine;
 
-namespace VirtualGarage.Serialization
+namespace RFGarage.Serialization
 {
     // Big thanks to AdamAdam
     [Serializable]
-    public struct Vector3Wrapper
+    public struct SerializableVector3
     {
         public float x;
         public float y;
         public float z;
         
-        public Vector3Wrapper(Vector3 vector3)
+        public SerializableVector3(Vector3 vector3)
         {
             x = vector3.x;
             y = vector3.y;

@@ -7,8 +7,8 @@
         <ProjectGuid>{6BD414D3-70FB-4459-ACCD-49973E18547D}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>VirtualGarage</RootNamespace>
-        <AssemblyName>VirtualGarage</AssemblyName>
+        <RootNamespace>RFGarage</RootNamespace>
+        <AssemblyName>RFGarage</AssemblyName>
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
     </PropertyGroup>
@@ -226,18 +226,19 @@
         <Compile Include="Enums\EResponseType.cs" />
         <Compile Include="EventListeners\PlayerEvent.cs" />
         <Compile Include="EventListeners\VehicleEvent.cs" />
+        <Compile Include="Helpers\ChatHelper.cs" />
         <Compile Include="Plugin.cs" />
-        <Compile Include="Models\AssetID.cs" />
-        <Compile Include="Models\Blacklist.cs" />
-        <Compile Include="Models\Garage.cs" />
-        <Compile Include="Models\PlayerVgVehicle.cs" />
+        <Compile Include="Models\AssetModel.cs" />
+        <Compile Include="Models\BlacklistModel.cs" />
+        <Compile Include="Models\GarageModel.cs" />
+        <Compile Include="Models\PlayerSerializableVehicleModel.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="Serialization\ItemPosition.cs" />
-        <Compile Include="Serialization\Vector3Wrapper.cs" />
-        <Compile Include="Serialization\VgBarricade.cs" />
-        <Compile Include="Serialization\VgItem.cs" />
-        <Compile Include="Serialization\VgVehicle.cs" />
-        <Compile Include="Utils\ByteArraySerializer.cs" />
+        <Compile Include="Serialization\SerializableItemPosition.cs" />
+        <Compile Include="Serialization\SerializableVector3.cs" />
+        <Compile Include="Serialization\SerializableBarricade.cs" />
+        <Compile Include="Serialization\SerializableItem.cs" />
+        <Compile Include="Serialization\SerializableVehicle.cs" />
+        <Compile Include="Utils\ByteArrayUtil.cs" />
         <Compile Include="Utils\Extensions.cs" />
         <Compile Include="Utils\GarageUtil.cs" />
         <Compile Include="Utils\VehicleUtil.cs" />

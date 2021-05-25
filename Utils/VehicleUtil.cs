@@ -3,7 +3,7 @@ using SDG.Unturned;
 using Steamworks;
 using UnityEngine;
 
-namespace VirtualGarage.Utils
+namespace RFGarage.Utils
 {
     public static class VehicleUtil
     {

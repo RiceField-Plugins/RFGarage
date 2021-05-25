@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using RFGarage.Enums;
+using RFGarage.Utils;
 using Rocket.API;
 using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
-using VirtualGarage.Enums;
-using VirtualGarage.Utils;
 
-namespace VirtualGarage.Commands
+namespace RFGarage.Commands
 {
     public class GarageRetrieveDrownCommand : IRocketCommand
     {

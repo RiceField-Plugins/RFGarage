@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RFGarage.Enums;
+using RFGarage.Models;
+using RFGarage.Utils;
 using Rocket.API;
 using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
-using VirtualGarage.Enums;
-using VirtualGarage.Models;
-using VirtualGarage.Utils;
 
-namespace VirtualGarage.Commands
+namespace RFGarage.Commands
 {
     public class GarageRetrieveCommand : IRocketCommand
     {
@@ -23,7 +23,7 @@ namespace VirtualGarage.Commands
         {
             if (command.Length > 2 || command.Length == 0)
             {
-                UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_invalid_parameter", Syntax), Plugin.MsgColor);
+                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_invalid_parameter", Syntax), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                 return;
             }
 
@@ -31,7 +31,7 @@ namespace VirtualGarage.Commands
             switch (command.Length)
             {
                 case 1 when Plugin.Conf.VirtualGarages.Any(g => string.Equals(g.Name, command[0], StringComparison.CurrentCultureIgnoreCase)):
-                    UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_invalid_parameter", Syntax), Plugin.MsgColor);
+                    caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_invalid_parameter", Syntax), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return;
                 case 1 when !Plugin.Conf.VirtualGarages.Any(g => string.Equals(g.Name, command[0], StringComparison.CurrentCultureIgnoreCase)):
                 {
@@ -39,23 +39,23 @@ namespace VirtualGarage.Commands
                         return;
                     var garage = Plugin.SelectedGarageDict[player.CSteamID];
                     GarageUtil.LoadVgVehicleFromSql(player, garage.Name, command[0], out var vehicle);
-                    UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gr_success", vehicle.asset.vehicleName, vehicle.asset.id, garage.Name), Plugin.MsgColor);
+                    caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_gr_success", vehicle.asset.vehicleName, vehicle.asset.id, garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return;
                 }
                 case 1:
-                    UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gr_invalid_parameter"), Plugin.MsgColor);
+                    caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_gr_invalid_parameter"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return;
                 case 2 when !CheckResponse(player, command):
                     return;
                 case 2:
                 {
-                    var garage = Garage.Parse(command[0]);
+                    var garage = GarageModel.Parse(command[0]);
                     GarageUtil.LoadVgVehicleFromSql(player, garage.Name, command[1], out var vehicle);
-                    UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gr_success", vehicle.asset.vehicleName, vehicle.asset.id, garage.Name), Plugin.MsgColor);
+                    caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_gr_success", vehicle.asset.vehicleName, vehicle.asset.id, garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return;
                 }
                 default:
-                    UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_invalid_parameter"), Plugin.MsgColor);
+                    caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_invalid_parameter"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     break;
             }
         }
@@ -63,27 +63,27 @@ namespace VirtualGarage.Commands
         private static bool CheckResponse(UnturnedPlayer player, string[] commands)
         {
             GarageUtil.GarageRetrieveChecks(player, out var responseType, commands);
-            Garage garage;
+            GarageModel garageModel;
             switch (responseType)
             {
                 case EResponseType.DONT_HAVE_VEHICLE:
-                    garage = Garage.Parse(commands?[0]);
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_no_vehicle", garage.Name), Plugin.MsgColor);
+                    garageModel = GarageModel.Parse(commands?[0]);
+                    player.SendChat(Plugin.Inst.Translate("virtualgarage_command_garage_no_vehicle", garageModel.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return false;
                 case EResponseType.GARAGE_NOT_FOUND:
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_not_found"), Plugin.MsgColor);
+                    player.SendChat(Plugin.Inst.Translate("virtualgarage_command_garage_not_found"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return false;
                 case EResponseType.GARAGE_NO_PERMISSION:
-                    garage = Garage.Parse(commands?[0]);
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_no_permission", garage.Name, garage.Permission), Plugin.MsgColor);
+                    garageModel = GarageModel.Parse(commands?[0]);
+                    player.SendChat(Plugin.Inst.Translate("virtualgarage_command_garage_no_permission", garageModel.Name, garageModel.Permission), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return false;
                 case EResponseType.GARAGE_NOT_SELECTED:
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_gr_garage_not_selected"), Plugin.MsgColor);
+                    player.SendChat(Plugin.Inst.Translate("virtualgarage_command_gr_garage_not_selected"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return false;
                 case EResponseType.SUCCESS:
                     return true;
                 default:
-                    UnturnedChat.Say(player, responseType.ToString(), Plugin.MsgColor);
+                    player.SendChat(responseType.ToString(), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return false;
             }
         }

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
+using RFGarage.Models;
 using Rocket.API;
-using VirtualGarage.Models;
 
-namespace VirtualGarage
+namespace RFGarage
 {
     public class Configuration : IRocketPluginConfiguration
     {
@@ -14,16 +14,18 @@ namespace VirtualGarage
         public string DatabaseName;
         public string DatabaseTableName;
         public string MessageColor;
+        public string AnnouncerIconUrl;
         public bool AutoGarageDrownedVehicles;
         public float CheckDrownedIntervalSeconds;
         public bool AutoClearDestroyedVehicles;
-        public List<Garage> VirtualGarages;
+        [XmlArrayItem("Garage")]
+        public List<GarageModel> VirtualGarages;
         [XmlArray, XmlArrayItem("Barricades")]
-        public List<Blacklist> BlacklistedBarricades;
+        public List<BlacklistModel> BlacklistedBarricades;
         [XmlArray, XmlArrayItem("TrunkItems")]
-        public List<Blacklist> BlacklistedTrunkItems;
+        public List<BlacklistModel> BlacklistedTrunkItems;
         [XmlArray, XmlArrayItem("Vehicles")]
-        public List<Blacklist> BlacklistedVehicles;
+        public List<BlacklistModel> BlacklistedVehicles;
         
         public void LoadDefaults()
         {
@@ -32,63 +34,64 @@ namespace VirtualGarage
             DatabaseUsername = "root";
             DatabasePassword = "123456";
             DatabaseName = "unturned";
-            DatabaseTableName = "virtualgarage";
+            DatabaseTableName = "rfgarage";
             MessageColor = "magenta";
+            AnnouncerIconUrl = "https://i.imgur.com/3KlgN14.png";
             AutoGarageDrownedVehicles = true;
             CheckDrownedIntervalSeconds = 2f;
             AutoClearDestroyedVehicles = true;
-            VirtualGarages = new List<Garage>
+            VirtualGarages = new List<GarageModel>
             {
-                new Garage
+                new GarageModel
                 {
                     Name = "Small",
                     Slot = 4,
                     Permission = "garage.small",
                 },
-                new Garage
+                new GarageModel
                 {
                     Name = "Medium",
                     Slot = 7,
                     Permission = "garage.medium",
                 },
             };
-            BlacklistedBarricades = new List<Blacklist> 
+            BlacklistedBarricades = new List<BlacklistModel> 
             {
-                new Blacklist
+                new BlacklistModel
                 {
                     BypassPermission = "garagebypass.barricade.example", 
-                    Assets = new List<AssetID> {new AssetID(1), new AssetID(2)},
+                    Assets = new List<AssetModel> {new AssetModel(1), new AssetModel(2)},
                 },
-                new Blacklist
+                new BlacklistModel
                 {
                     BypassPermission = "garagebypass.barricade.example1", 
-                    Assets = new List<AssetID> {new AssetID(1), new AssetID(2)},
+                    Assets = new List<AssetModel> {new AssetModel(1), new AssetModel(2)},
                 },
             };
-            BlacklistedTrunkItems = new List<Blacklist> 
+            BlacklistedTrunkItems = new List<BlacklistModel> 
             {
-                new Blacklist
+                new BlacklistModel
                 {
                     BypassPermission = "garagebypass.trunk.example", 
-                    Assets = new List<AssetID> {new AssetID(1), new AssetID(2)},
+                    Assets = new List<AssetModel> {new AssetModel(1), new AssetModel(2)},
                 },
-                new Blacklist
+                new BlacklistModel
                 {
                     BypassPermission = "garagebypass.trunk.example1", 
-                    Assets = new List<AssetID> {new AssetID(1), new AssetID(2)},
+                    Assets = new List<AssetModel> {new AssetModel(1), new AssetModel(2)},
                 },
             };
-            BlacklistedVehicles = new List<Blacklist> 
+            BlacklistedVehicles = new List<BlacklistModel> 
             {
-                new Blacklist
+                new BlacklistModel
                 {
                     BypassPermission = "garagebypass.vehicle.example", 
-                    Assets = new List<AssetID> {new AssetID(1), new AssetID(2)},
+                    Assets = new List<AssetModel> {new AssetModel(1), new AssetModel(2)},
                 },
-                new Blacklist
+                new BlacklistModel
                 {
                     BypassPermission = "garagebypass.vehicle.example1", 
-                    Assets = new List<AssetID> {new AssetID(1), new AssetID(2)},
+                    Assets = new List<AssetModel> {new AssetModel(1), new AssetModel(2)},
                 },
             };
         }

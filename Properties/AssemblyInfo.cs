@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("VirtualGarage")]
+[assembly: AssemblyTitle("RFGarage")]
 [assembly: AssemblyDescription("BarehSolok")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("BarehSolok")]
-[assembly: AssemblyProduct("VirtualGarage")]
+[assembly: AssemblyProduct("RFGarage")]
 [assembly: AssemblyCopyright("Copyright © BarehSolok 2021")]
 [assembly: AssemblyTrademark("BarehSolok")]
 [assembly: AssemblyCulture("")]

@@ -5,9 +5,9 @@ using System.Xml.Serialization;
 using Rocket.Core;
 using Rocket.Unturned.Player;
 
-namespace VirtualGarage.Models
+namespace RFGarage.Models
 {
-    public class Garage
+    public class GarageModel
     {
         [XmlAttribute]
         public string Name;
@@ -16,33 +16,33 @@ namespace VirtualGarage.Models
         [XmlAttribute]
         public string Permission;
 
-        public Garage()
+        public GarageModel()
         {
         }
-        public Garage(string name, uint slot, string permission)
+        public GarageModel(string name, uint slot, string permission)
         {
             Name = name;
             Slot = slot;
             Permission = permission;
         }
 
-        public static Garage Parse(string garageName)
+        public static GarageModel Parse(string garageName)
         {
             if (garageName == "" || garageName == string.Empty)
                 return null;
 
             return Plugin.Conf.VirtualGarages.FirstOrDefault(virtualGarage => string.Equals(virtualGarage.Name, garageName, StringComparison.CurrentCultureIgnoreCase));
         }
-        public static bool TryParse(string garageName, out Garage garage)
+        public static bool TryParse(string garageName, out GarageModel garageModel)
         {
-            garage = null;
+            garageModel = null;
 
             if (garageName == "" || garageName == string.Empty)
                 return false;
 
             foreach (var virtualGarage in Plugin.Conf.VirtualGarages.Where(virtualGarage => string.Equals(garageName, virtualGarage.Name, StringComparison.CurrentCultureIgnoreCase)))
             {
-                garage = virtualGarage;
+                garageModel = virtualGarage;
                 return true;
             }
 

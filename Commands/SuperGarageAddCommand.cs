@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using RFGarage.Enums;
+using RFGarage.Models;
+using RFGarage.Utils;
 using Rocket.API;
 using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
-using VirtualGarage.Enums;
-using VirtualGarage.Models;
-using VirtualGarage.Utils;
 
-namespace VirtualGarage.Commands
+namespace RFGarage.Commands
 {
     public class SuperGarageAddCommand : IRocketCommand
     {
@@ -29,7 +29,7 @@ namespace VirtualGarage.Commands
             var player = (UnturnedPlayer) caller;
             if (!CheckResponse(player, command, out var vehicle, out var vehicleRegion))
                 return;
-            var garage = Garage.Parse(command[1]);
+            var garage = GarageModel.Parse(command[1]);
             GarageUtil.SaveVgVehicleToSql(ulong.Parse(command[0]), garage.Name, command[2], vehicle, vehicleRegion);
             UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_sgadd_success", vehicle.asset.vehicleName, vehicle.asset.id, garage.Name), Plugin.MsgColor);
         }
@@ -42,7 +42,7 @@ namespace VirtualGarage.Commands
                 case EResponseType.GARAGE_NOT_FOUND:
                     UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_not_found"), Plugin.MsgColor);
                     return false;
-                case EResponseType.INVALID_STEAMID:
+                case EResponseType.INVALID_STEAM_ID:
                     UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_invalid_id"), Plugin.MsgColor);
                     return false;
                 case EResponseType.SAME_NAME_AS_GARAGE:
