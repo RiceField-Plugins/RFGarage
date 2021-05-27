@@ -24,7 +24,7 @@ namespace RFGarage.Commands
         {
             if (command.Length > 1)
             {
-                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_invalid_parameter"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                caller.SendChat(Plugin.Inst.Translate("rfgarage_command_invalid_parameter"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                 return;
             }
 
@@ -35,7 +35,7 @@ namespace RFGarage.Commands
                 {
                     var garages = GarageUtil.GetAllGarages(player);
                     var list = !garages.Any() ? "None" : string.Join(", ", (from t in garages let count = Plugin.DbManager.GetVehicleCount(player.CSteamID.m_SteamID.ToString(), t.Name) select $"{t.Name} ({count}/{t.Slot})").ToArray());
-                    caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_glist_garages_success", list), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_glist_garages_success", list), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return;
                 }
                 case 1:
@@ -50,13 +50,13 @@ namespace RFGarage.Commands
                         var vg = vgVehicle.Info.ToVgVehicle();
                         var asset = (VehicleAsset) Assets.find(EAssetType.VEHICLE, vg.ID);
                         var list = $"[Name] {vgVehicle.VehicleName}, [VName] {asset.vehicleName}, [ID] {asset.id}";
-                        caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_glist_garage_success", garage.Name, list), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                        caller.SendChat(Plugin.Inst.Translate("rfgarage_command_glist_garage_success", garage.Name, list), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     }
 
                     return;
                 }
                 default:
-                    caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_invalid_parameter"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_invalid_parameter"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     break;
             }
         }
@@ -67,10 +67,10 @@ namespace RFGarage.Commands
             switch (responseType)
             {
                 case EResponseType.GARAGE_NOT_FOUND:
-                    player.SendChat(Plugin.Inst.Translate("virtualgarage_command_garage_not_found"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_garage_not_found"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return false;
                 case EResponseType.GARAGE_NO_PERMISSION:
-                    player.SendChat(Plugin.Inst.Translate("virtualgarage_command_garage_no_permission", garageModel.Name, garageModel.Permission), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_garage_no_permission", garageModel.Name, garageModel.Permission), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return false;
                 case EResponseType.SUCCESS:
                     return true;

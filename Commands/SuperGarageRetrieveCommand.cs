@@ -22,7 +22,7 @@ namespace RFGarage.Commands
         {
             if (command.Length != 3)
             {
-                UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_invalid_parameter", Syntax), Plugin.MsgColor);
+                UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_invalid_parameter", Syntax), Plugin.MsgColor);
                 return;
             }
 
@@ -39,7 +39,7 @@ namespace RFGarage.Commands
                 garage = "Drown";
             }
             GarageUtil.LoadVgVehicleFromSql(player, garage, command[1].ToLower() != "drown" ? command[2] : "Drowned", out var vehicle, command[0]);
-            UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gr_success", vehicle.asset.vehicleName, vehicle.asset.id, garage), Plugin.MsgColor);
+            UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_gr_success", vehicle.asset.vehicleName, vehicle.asset.id, garage), Plugin.MsgColor);
         }
         
         private static bool CheckResponse(UnturnedPlayer player, string[] commands)
@@ -50,13 +50,13 @@ namespace RFGarage.Commands
             {
                 case EResponseType.DONT_HAVE_VEHICLE:
                     var garage = GarageModel.Parse(commands?[1]);
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_sgr_garage_no_vehicle", commands?[0], garage.Name), Plugin.MsgColor);
+                    UnturnedChat.Say(player, Plugin.Inst.Translate("rfgarage_command_sgr_garage_no_vehicle", commands?[0], garage.Name), Plugin.MsgColor);
                     return false;
                 case EResponseType.GARAGE_NOT_FOUND:
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_not_found"), Plugin.MsgColor);
+                    UnturnedChat.Say(player, Plugin.Inst.Translate("rfgarage_command_garage_not_found"), Plugin.MsgColor);
                     return false;
                 case EResponseType.INVALID_STEAM_ID:
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_invalid_id"), Plugin.MsgColor);
+                    UnturnedChat.Say(player, Plugin.Inst.Translate("rfgarage_command_invalid_id"), Plugin.MsgColor);
                     return false;
                 case EResponseType.SUCCESS:
                     return true;

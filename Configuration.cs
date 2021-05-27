@@ -38,7 +38,7 @@ namespace RFGarage
             MessageColor = "magenta";
             AnnouncerIconUrl = "https://i.imgur.com/3KlgN14.png";
             AutoGarageDrownedVehicles = true;
-            CheckDrownedIntervalSeconds = 2f;
+            CheckDrownedIntervalSeconds = 5f;
             AutoClearDestroyedVehicles = true;
             VirtualGarages = new List<GarageModel>
             {

@@ -44,10 +44,10 @@
           <Private>True</Private>
         </Reference>
         <Reference Include="I18N, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
-          <HintPath>..\..\..\Libraries\MySQL\I18N.v2.dll</HintPath>
+          <HintPath>..\..\..\Repos\Unturned\Libraries\MySQL\I18N.v2.dll</HintPath>
         </Reference>
         <Reference Include="I18N.West, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
-          <HintPath>..\..\..\Libraries\MySQL\I18N.v2.West.dll</HintPath>
+          <HintPath>..\..\..\Repos\Unturned\Libraries\MySQL\I18N.v2.West.dll</HintPath>
         </Reference>
         <Reference Include="K4os.Compression.LZ4, Version=1.1.11.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d">
           <HintPath>packages\K4os.Compression.LZ4.1.1.11\lib\net46\K4os.Compression.LZ4.dll</HintPath>

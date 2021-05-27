@@ -23,7 +23,7 @@ namespace RFGarage.Commands
         {
             if (command.Length > 1)
             {
-                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_invalid_parameter", Syntax), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                caller.SendChat(Plugin.Inst.Translate("rfgarage_command_invalid_parameter", Syntax), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                 return;
             }
             
@@ -33,17 +33,17 @@ namespace RFGarage.Commands
                 case 0:
                     Plugin.GarageAddAllQueueDict[player.CSteamID] = true;
                 
-                    caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_gadd_all_ask_confirm"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_gadd_all_ask_confirm"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return;
                 case 1:
                     switch (command[0].ToLower())
                     {
                         case "confirm" when !Plugin.GarageAddAllQueueDict[player.CSteamID]:
-                            caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_all_no_queue"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                            caller.SendChat(Plugin.Inst.Translate("rfgarage_command_all_no_queue"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                             return;
                         case "confirm":
                         {
-                            caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_gadd_all_confirm"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                            caller.SendChat(Plugin.Inst.Translate("rfgarage_command_gadd_all_confirm"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                             // Tuple < availableGarage, availableSlot >
                             var passedVehicles = new List<InteractableVehicle>();
                             var blacklistedVehicles = new List<InteractableVehicle>();
@@ -83,30 +83,31 @@ namespace RFGarage.Commands
                                 }
                             }
 
-                            caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_gadd_all_success", 
+                            caller.SendChat(Plugin.Inst.Translate("rfgarage_command_gadd_all_success", 
                                 vehicleIndex, passedVehicles.Count - vehicleIndex), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                             foreach (var vehicle in successVehicles)
                             {
-                                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_all_success_vehicle", 
+                                caller.SendChat(Plugin.Inst.Translate("rfgarage_command_all_success_vehicle", 
                                     vehicle.asset.id, vehicle.asset.vehicleName), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                             }
                             foreach (var vehicle in blacklistedVehicles)
                             {
-                                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_gadd_all_blacklist_vehicle", 
+                                caller.SendChat(Plugin.Inst.Translate("rfgarage_command_gadd_all_blacklist_vehicle", 
                                     vehicle.asset.id, vehicle.asset.vehicleName), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                             }
                             passedVehicles.RemoveRange(0, vehicleIndex);
                             foreach (var vehicle in passedVehicles)
                             {
-                                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_all_fail_vehicle", 
+                                caller.SendChat(Plugin.Inst.Translate("rfgarage_command_all_fail_vehicle", 
                                     vehicle.asset.id, vehicle.asset.vehicleName), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                             }
+                            Plugin.GarageAddAllQueueDict[player.CSteamID] = false;
                             return;
                         }
                         case "abort":
                             Plugin.GarageAddAllQueueDict[player.CSteamID] = false;
                     
-                            caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_all_abort"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                            caller.SendChat(Plugin.Inst.Translate("rfgarage_command_all_abort"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                             return;
                     }
 

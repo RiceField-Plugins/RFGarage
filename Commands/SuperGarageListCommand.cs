@@ -23,7 +23,7 @@ namespace RFGarage.Commands
         {
             if (command.Length < 1 || command.Length > 2)
             {
-                UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_invalid_parameter"), Plugin.MsgColor);
+                UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_invalid_parameter"), Plugin.MsgColor);
                 return;
             }
 
@@ -39,7 +39,7 @@ namespace RFGarage.Commands
                     var list = string.Join(", ", (from t in garages let count = Plugin.DbManager.GetVehicleCount(command[0], t.Name) select $"{t.Name} ({count}/{t.Slot})").ToArray());
                     if (!garages.Any())
                         list = "None";
-                    UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_glist_garages_success", list), Plugin.MsgColor);
+                    UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_glist_garages_success", list), Plugin.MsgColor);
                     return;
                 }
                 case 2 when !CheckResponse(player, command[0], GarageModel.Parse(command[1])):
@@ -54,7 +54,7 @@ namespace RFGarage.Commands
                         var vg = vgVehicle.Info.ToVgVehicle();
                         var asset = (VehicleAsset) Assets.find(EAssetType.VEHICLE, vg.ID);
                         var list = $"[Name] {vgVehicle.VehicleName}, [VName] {asset.vehicleName}, [ID] {asset.id}";
-                        UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_glist_garage_success", garage.Name, list), Plugin.MsgColor);
+                        UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_glist_garage_success", garage.Name, list), Plugin.MsgColor);
                     }
 
                     break;
@@ -68,13 +68,13 @@ namespace RFGarage.Commands
             switch (responseType)
             {
                 case EResponseType.GARAGE_NOT_FOUND:
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_not_found"), Plugin.MsgColor);
+                    UnturnedChat.Say(player, Plugin.Inst.Translate("rfgarage_command_garage_not_found"), Plugin.MsgColor);
                     return false;
                 case EResponseType.INVALID_STEAM_ID:
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_invalid_id"), Plugin.MsgColor);
+                    UnturnedChat.Say(player, Plugin.Inst.Translate("rfgarage_command_invalid_id"), Plugin.MsgColor);
                     return false;
                 case EResponseType.PLAYER_NOT_ONLINE:
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_player_not_online"), Plugin.MsgColor);
+                    UnturnedChat.Say(player, Plugin.Inst.Translate("rfgarage_command_player_not_online"), Plugin.MsgColor);
                     return false;
                 case EResponseType.SUCCESS:
                     return true;

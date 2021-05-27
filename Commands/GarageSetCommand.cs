@@ -19,19 +19,19 @@ namespace RFGarage.Commands
         {
             if (command.Length != 1)
             {
-                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_invalid_parameter", Syntax), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                caller.SendChat(Plugin.Inst.Translate("rfgarage_command_invalid_parameter", Syntax), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                 return;
             }
 
             var player = (UnturnedPlayer) caller;
             if (!GarageModel.TryParse(command[0], out var garage))
             {
-                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_garage_not_found"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                caller.SendChat(Plugin.Inst.Translate("rfgarage_command_garage_not_found"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                 return;
             }
             if (!player.CheckPermission(garage.Permission))
             {
-                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_garage_no_permission", garage.Name, garage.Permission), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                caller.SendChat(Plugin.Inst.Translate("rfgarage_command_garage_no_permission", garage.Name, garage.Permission), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                 return;
             }
 
@@ -39,7 +39,7 @@ namespace RFGarage.Commands
                 Plugin.SelectedGarageDict.Add(player.CSteamID, garage);
             else
                 Plugin.SelectedGarageDict[player.CSteamID] = garage;
-            caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_gset_success", garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+            caller.SendChat(Plugin.Inst.Translate("rfgarage_command_gset_success", garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
         }
     }
 }

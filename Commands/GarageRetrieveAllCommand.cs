@@ -23,7 +23,7 @@ namespace RFGarage.Commands
         {
             if (command.Length > 1)
             {
-                UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_invalid_parameter", Syntax), Plugin.MsgColor);
+                UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_invalid_parameter", Syntax), Plugin.MsgColor);
                 return;
             }
 
@@ -31,14 +31,14 @@ namespace RFGarage.Commands
             switch (command.Length)
             {
                 case 0 when Plugin.GarageRetrieveAllQueueDict[player.CSteamID].Count() != 0:
-                    UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gr_all_queue_exists"), Plugin.MsgColor);
+                    UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_gr_all_queue_exists"), Plugin.MsgColor);
                     return;
                 case 0:
                 {
                     var vgVehicles = Plugin.DbManager.ReadVgVehicleAllWithoutDrown(player.CSteamID.m_SteamID.ToString());
                     Plugin.GarageRetrieveAllQueueDict[player.CSteamID] = vgVehicles;
                 
-                    UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gr_all_ask_confirm"), Plugin.MsgColor);
+                    UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_gr_all_ask_confirm"), Plugin.MsgColor);
                     return;
                 }
                 case 1:
@@ -46,11 +46,11 @@ namespace RFGarage.Commands
                     switch (command[0].ToLower())
                     {
                         case "confirm" when !Plugin.GarageRetrieveAllQueueDict[player.CSteamID].Any():
-                            UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_all_no_queue"), Plugin.MsgColor);
+                            UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_all_no_queue"), Plugin.MsgColor);
                             return;
                         case "confirm":
                         {
-                            UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gr_all_confirm"), Plugin.MsgColor);
+                            UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_gr_all_confirm"), Plugin.MsgColor);
                             var successVehicles = new List<InteractableVehicle>();
                             var vehicleIndex = 0;
                             foreach (var playerVgVehicle in Plugin.GarageRetrieveAllQueueDict[player.CSteamID])
@@ -68,31 +68,32 @@ namespace RFGarage.Commands
                                 successVehicles.Add(spawnedVehicle);
                                 vehicleIndex++;
                             }
-                            UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gr_all_success", 
+                            UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_gr_all_success", 
                                 successVehicles.Count, Plugin.GarageRetrieveAllQueueDict.Count - successVehicles.Count), Plugin.MsgColor);
                             foreach (var vehicle in successVehicles)
                             {
-                                UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_all_success_vehicle", 
+                                UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_all_success_vehicle", 
                                     vehicle.asset.id, vehicle.asset.vehicleName), Plugin.MsgColor);
                             }
                             successVehicles.RemoveRange(0, vehicleIndex);
                             foreach (var vehicle in successVehicles)
                             {
-                                UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_all_fail_vehicle", 
+                                UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_all_fail_vehicle", 
                                     vehicle.asset.id, vehicle.asset.vehicleName), Plugin.MsgColor);
                             }
+                            Plugin.GarageRetrieveAllQueueDict[player.CSteamID] = new List<PlayerSerializableVehicleModel>();
                             return;
                         }
                         case "abort":
                             Plugin.GarageRetrieveAllQueueDict[player.CSteamID] = new List<PlayerSerializableVehicleModel>();
                     
-                            UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_all_abort"), Plugin.MsgColor);
+                            UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_all_abort"), Plugin.MsgColor);
                             return;
                     }
 
                     if (Plugin.GarageRetrieveAllQueueDict[player.CSteamID].Count() != 0)
                     {
-                        UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gr_all_queue_exists"), Plugin.MsgColor);
+                        UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_gr_all_queue_exists"), Plugin.MsgColor);
                         return;
                     }
                 
@@ -101,7 +102,7 @@ namespace RFGarage.Commands
                     var garage = GarageModel.Parse(command[0]);
                     var vgVehicles = Plugin.DbManager.ReadVgVehicleByGarageName(player.CSteamID.m_SteamID.ToString(), garage.Name);
                     Plugin.GarageRetrieveAllQueueDict[player.CSteamID] = vgVehicles;
-                    UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gr_all_ask_confirm"), Plugin.MsgColor);
+                    UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_gr_all_ask_confirm"), Plugin.MsgColor);
                     return;
                 }
             }
@@ -115,14 +116,14 @@ namespace RFGarage.Commands
             {
                 case EResponseType.DONT_HAVE_VEHICLE:
                     garageModel = GarageModel.Parse(commands?[0]);
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_no_vehicle", garageModel.Name), Plugin.MsgColor);
+                    UnturnedChat.Say(player, Plugin.Inst.Translate("rfgarage_command_garage_no_vehicle", garageModel.Name), Plugin.MsgColor);
                     return false;
                 case EResponseType.GARAGE_NOT_FOUND:
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_not_found"), Plugin.MsgColor);
+                    UnturnedChat.Say(player, Plugin.Inst.Translate("rfgarage_command_garage_not_found"), Plugin.MsgColor);
                     return false;
                 case EResponseType.GARAGE_NO_PERMISSION:
                     garageModel = GarageModel.Parse(commands?[0]);
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_no_permission", garageModel.Name, garageModel.Permission), Plugin.MsgColor);
+                    UnturnedChat.Say(player, Plugin.Inst.Translate("rfgarage_command_garage_no_permission", garageModel.Name, garageModel.Permission), Plugin.MsgColor);
                     return false;
                 case EResponseType.SUCCESS:
                     return true;

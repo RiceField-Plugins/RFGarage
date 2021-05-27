@@ -23,7 +23,7 @@ namespace RFGarage.Commands
         {
             if (command.Length > 2 || command.Length == 0)
             {
-                caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_invalid_parameter", Syntax), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                caller.SendChat(Plugin.Inst.Translate("rfgarage_command_invalid_parameter", Syntax), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                 return;
             }
 
@@ -31,7 +31,7 @@ namespace RFGarage.Commands
             switch (command.Length)
             {
                 case 1 when Plugin.Conf.VirtualGarages.Any(g => string.Equals(g.Name, command[0], StringComparison.CurrentCultureIgnoreCase)):
-                    caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_invalid_parameter", Syntax), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_invalid_parameter", Syntax), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return;
                 case 1 when !Plugin.Conf.VirtualGarages.Any(g => string.Equals(g.Name, command[0], StringComparison.CurrentCultureIgnoreCase)):
                 {
@@ -39,11 +39,11 @@ namespace RFGarage.Commands
                         return;
                     var garage = Plugin.SelectedGarageDict[player.CSteamID];
                     GarageUtil.LoadVgVehicleFromSql(player, garage.Name, command[0], out var vehicle);
-                    caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_gr_success", vehicle.asset.vehicleName, vehicle.asset.id, garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_gr_success", vehicle.asset.vehicleName, vehicle.asset.id, garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return;
                 }
                 case 1:
-                    caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_gr_invalid_parameter"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_gr_invalid_parameter"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return;
                 case 2 when !CheckResponse(player, command):
                     return;
@@ -51,11 +51,11 @@ namespace RFGarage.Commands
                 {
                     var garage = GarageModel.Parse(command[0]);
                     GarageUtil.LoadVgVehicleFromSql(player, garage.Name, command[1], out var vehicle);
-                    caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_gr_success", vehicle.asset.vehicleName, vehicle.asset.id, garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_gr_success", vehicle.asset.vehicleName, vehicle.asset.id, garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return;
                 }
                 default:
-                    caller.SendChat(Plugin.Inst.Translate("virtualgarage_command_invalid_parameter"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_invalid_parameter"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     break;
             }
         }
@@ -68,17 +68,17 @@ namespace RFGarage.Commands
             {
                 case EResponseType.DONT_HAVE_VEHICLE:
                     garageModel = GarageModel.Parse(commands?[0]);
-                    player.SendChat(Plugin.Inst.Translate("virtualgarage_command_garage_no_vehicle", garageModel.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_garage_no_vehicle", garageModel.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return false;
                 case EResponseType.GARAGE_NOT_FOUND:
-                    player.SendChat(Plugin.Inst.Translate("virtualgarage_command_garage_not_found"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_garage_not_found"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return false;
                 case EResponseType.GARAGE_NO_PERMISSION:
                     garageModel = GarageModel.Parse(commands?[0]);
-                    player.SendChat(Plugin.Inst.Translate("virtualgarage_command_garage_no_permission", garageModel.Name, garageModel.Permission), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_garage_no_permission", garageModel.Name, garageModel.Permission), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return false;
                 case EResponseType.GARAGE_NOT_SELECTED:
-                    player.SendChat(Plugin.Inst.Translate("virtualgarage_command_gr_garage_not_selected"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_gr_garage_not_selected"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return false;
                 case EResponseType.SUCCESS:
                     return true;

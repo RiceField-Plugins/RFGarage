@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("RFGarage")]
-[assembly: AssemblyDescription("BarehSolok")]
+[assembly: AssemblyDescription("RiceField Plugins")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("BarehSolok")]
+[assembly: AssemblyCompany("RiceField Plugins")]
 [assembly: AssemblyProduct("RFGarage")]
-[assembly: AssemblyCopyright("Copyright © BarehSolok 2021")]
-[assembly: AssemblyTrademark("BarehSolok")]
+[assembly: AssemblyCopyright("Copyright © RiceField Plugins 2021")]
+[assembly: AssemblyTrademark("RiceField Plugins")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

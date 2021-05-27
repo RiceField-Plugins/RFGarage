@@ -20,7 +20,7 @@ namespace RFGarage.Commands
         {
             if (command.Length > 0)
             {
-                UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_invalid_parameter", Syntax), Plugin.MsgColor);
+                UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_invalid_parameter", Syntax), Plugin.MsgColor);
                 return;
             }
 
@@ -29,7 +29,7 @@ namespace RFGarage.Commands
             if (!CheckResponse(player))
                 return;
             GarageUtil.LoadVgVehicleFromSql(player, "Drown", "Drowned", out var vehicle);
-            UnturnedChat.Say(caller, Plugin.Inst.Translate("virtualgarage_command_gr_success", 
+            UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_gr_success", 
                 vehicle.asset.vehicleName, vehicle.asset.id, "Drown"), Plugin.MsgColor);
         }
         private static bool CheckResponse(UnturnedPlayer player)
@@ -44,7 +44,7 @@ namespace RFGarage.Commands
             switch (responseType)
             {
                 case EResponseType.DONT_HAVE_VEHICLE:
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("virtualgarage_command_garage_no_vehicle", "Drown"), Plugin.MsgColor);
+                    UnturnedChat.Say(player, Plugin.Inst.Translate("rfgarage_command_garage_no_vehicle", "Drown"), Plugin.MsgColor);
                     return false;
                 case EResponseType.SUCCESS:
                     return true;

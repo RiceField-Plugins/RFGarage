@@ -299,17 +299,8 @@ namespace RFGarage.Utils
             try
             {
                 var info = SerializableVehicle.Create(vehicle).ToInfo();
-                foreach (var currentPlayer in vehicle.passengers.Where(c => c.player != null))
-                {
-                    vehicle.forceRemovePlayer(out var seat, currentPlayer.player.playerID.steamID, out var point, out var angle);
-                    VehicleManager.sendExitVehicle(vehicle, seat, point, angle, true);
-                }
-                if(BarricadeManager.tryGetPlant(vehicle.transform, out _, out _, out _, out var region))
-                {
-                    vehicle.trunkItems?.items?.Clear();
-                    region.barricades?.Clear();
-                    region.drops.Clear();
-                }
+                VehicleUtil.ForceExitPassenger(vehicle);
+                VehicleUtil.ClearItems(vehicle);
                 Plugin.DbManager.InsertVgVehicle(steamID.ToString(), garageName, vehicleName, info);
                 VehicleManager.askVehicleDestroy(vehicle);
             }
