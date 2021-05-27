@@ -7,6 +7,7 @@ namespace RFGarage
 {
     public class Configuration : IRocketPluginConfiguration
     {
+        public bool Enabled;
         public string DatabaseAddress;
         public uint DatabasePort;
         public string DatabaseUsername;
@@ -17,6 +18,7 @@ namespace RFGarage
         public string AnnouncerIconUrl;
         public bool AutoGarageDrownedVehicles;
         public float CheckDrownedIntervalSeconds;
+        public uint DrownGarageSlot;
         public bool AutoClearDestroyedVehicles;
         [XmlArrayItem("Garage")]
         public List<GarageModel> VirtualGarages;
@@ -29,6 +31,7 @@ namespace RFGarage
         
         public void LoadDefaults()
         {
+            Enabled = false;
             DatabaseAddress = "127.0.0.1";
             DatabasePort = 3306;
             DatabaseUsername = "root";
@@ -39,6 +42,7 @@ namespace RFGarage
             AnnouncerIconUrl = "https://i.imgur.com/3KlgN14.png";
             AutoGarageDrownedVehicles = true;
             CheckDrownedIntervalSeconds = 5f;
+            DrownGarageSlot = 0;
             AutoClearDestroyedVehicles = true;
             VirtualGarages = new List<GarageModel>
             {

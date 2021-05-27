@@ -13,7 +13,7 @@ namespace RFGarage.Commands
         public string Name => "garageset";
         public string Help => "Set your default garage.";
         public string Syntax => "/garageset <garageName>";
-        public List<string> Aliases => new List<string> {"gset"};
+        public List<string> Aliases => new List<string> { "gs", "gset"};
         public List<string> Permissions => new List<string> {"garageset"};
         public void Execute(IRocketPlayer caller, string[] command)
         {

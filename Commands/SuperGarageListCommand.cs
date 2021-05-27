@@ -17,7 +17,7 @@ namespace RFGarage.Commands
         public string Name => "supergaragelist";
         public string Help => "Check other player garage's contents.";
         public string Syntax => "/supergaragelist <steamID> | /supergaragelist <steamID> <garageName>";
-        public List<string> Aliases => new List<string> {"sglist"};
+        public List<string> Aliases => new List<string> {"sgl"};
         public List<string> Permissions => new List<string> {"supergaragelist"};
         public void Execute(IRocketPlayer caller, string[] command)
         {

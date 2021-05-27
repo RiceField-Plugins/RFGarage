@@ -8,6 +8,7 @@ using Rocket.API.Collections;
 using Rocket.Core.Plugins;
 using Rocket.Unturned;
 using Rocket.Unturned.Chat;
+using Rocket.Unturned.Player;
 using SDG.Unturned;
 using Steamworks;
 using UnityEngine;
@@ -30,51 +31,62 @@ namespace RFGarage
         {
             Inst = this;
             Conf = Configuration.Instance;
-            DbManager = new MySqlDb(Conf.DatabaseAddress, Conf.DatabasePort, Conf.DatabaseUsername,
-                Conf.DatabasePassword, Conf.DatabaseName, Conf.DatabaseTableName, MySqlDb.CreateTableQuery);
-            MsgColor = UnturnedChat.GetColorFromName(Conf.MessageColor, Color.green);
 
-            GarageAddAllQueueDict = new Dictionary<CSteamID, bool>();
-            GarageRetrieveAllQueueDict = new Dictionary<CSteamID, IEnumerable<PlayerSerializableVehicleModel>>();
-            SelectedGarageDict = new Dictionary<CSteamID, GarageModel>();
-            if (Conf.AutoGarageDrownedVehicles && Level.isLoaded)
+            if (Conf.Enabled)
             {
-                _drownCheckCor = StartCoroutine(AutoCheck());
-            }
+                DbManager = new MySqlDb(Conf.DatabaseAddress, Conf.DatabasePort, Conf.DatabaseUsername,
+                    Conf.DatabasePassword, Conf.DatabaseName, Conf.DatabaseTableName, MySqlDb.CreateTableQuery);
+                MsgColor = UnturnedChat.GetColorFromName(Conf.MessageColor, Color.green);
 
-            Level.onLevelLoaded += OnLevelLoadedEvent;
-            U.Events.OnPlayerConnected += PlayerEvent.OnConnected;
-            U.Events.OnPlayerDisconnected += PlayerEvent.OnDisconnected;
-            VehicleManager.OnVehicleExploded += VehicleEvent.OnExploded;
+                GarageAddAllQueueDict = new Dictionary<CSteamID, bool>();
+                GarageRetrieveAllQueueDict = new Dictionary<CSteamID, IEnumerable<PlayerSerializableVehicleModel>>();
+                SelectedGarageDict = new Dictionary<CSteamID, GarageModel>();
+                if (Conf.AutoGarageDrownedVehicles && Level.isLoaded)
+                {
+                    Conf.VirtualGarages.Add(new GarageModel("Drown", Conf.DrownGarageSlot, "garage.drown"));
+                    _drownCheckCor = StartCoroutine(AutoCheck());
+                }
+
+                Level.onLevelLoaded += OnLevelLoadedEvent;
+                U.Events.OnPlayerConnected += PlayerEvent.OnConnected;
+                U.Events.OnPlayerDisconnected += PlayerEvent.OnDisconnected;
+                VehicleManager.OnVehicleExploded += VehicleEvent.OnExploded;
+            }
+            else
+                Logger.LogError("[RFGarage] Plugin: DISABLED");
             
             Logger.LogWarning("[RFGarage] Plugin loaded successfully!");
-            Logger.LogWarning("[RFGarage] RFGarage v1.0.5");
+            Logger.LogWarning("[RFGarage] RFGarage v1.0.6");
             Logger.LogWarning("[RFGarage] Made with 'rice' by RiceField Plugins!");
         }
         protected override void Unload()
         {
-            GarageAddAllQueueDict.Clear();
-            GarageRetrieveAllQueueDict.Clear();
-            SelectedGarageDict.Clear();
-            if (Conf.AutoGarageDrownedVehicles && Level.isLoaded)
+            if (Conf.Enabled)
             {
-                StopCoroutine(_drownCheckCor);
+                DbManager = null;
+                GarageAddAllQueueDict.Clear();
+                GarageRetrieveAllQueueDict.Clear();
+                SelectedGarageDict.Clear();
+                if (Conf.AutoGarageDrownedVehicles && Level.isLoaded)
+                {
+                    StopCoroutine(_drownCheckCor);
+                }
+            
+                Level.onLevelLoaded -= OnLevelLoadedEvent;
+                U.Events.OnPlayerConnected -= PlayerEvent.OnConnected;
+                U.Events.OnPlayerDisconnected -= PlayerEvent.OnDisconnected;
+                VehicleManager.OnVehicleExploded -= VehicleEvent.OnExploded;
             }
             
             Inst = null;
             Conf = null;
-            DbManager = null;
-            
-            Level.onLevelLoaded -= OnLevelLoadedEvent;
-            U.Events.OnPlayerConnected -= PlayerEvent.OnConnected;
-            U.Events.OnPlayerDisconnected -= PlayerEvent.OnDisconnected;
-            VehicleManager.OnVehicleExploded -= VehicleEvent.OnExploded;
             
             Logger.LogWarning("[RFGarage] Plugin unloaded successfully!");
         }
         public override TranslationList DefaultTranslations =>
             new TranslationList
             {
+                {"rfgarage_autogarage_drown_success", "[RFGarage] Your vehicle: {0} [{1}] has been added to garage automatically! To retrieve type /grd"},
                 {"rfgarage_command_all_no_queue", "[RFGarage] You don't have any related queue!"},
                 {"rfgarage_command_all_abort", "[RFGarage] The process has been aborted"},
                 {"rfgarage_command_all_fail_vehicle", "[RFGarage] FAILED: [ID] {0}, [Name] {1}"},
@@ -146,15 +158,24 @@ namespace RFGarage
         private static void CheckForDrownedVehicles()
         {
             var vehicles = VehicleManager.vehicles;
-            foreach (var vehicle in vehicles)
+            for (var i = vehicles.Count - 1; i >= 0; i--)
             {
-                if (!VehicleUtil.VehicleHasOwner(vehicle))
+                if (!VehicleUtil.VehicleHasOwner(vehicles[i]))
                     continue;
-                if (!vehicle.isDrowned)
+                if (!vehicles[i].isDrowned)
                     continue;
-                var drownedVehicleRegion = BarricadeManager.getRegionFromVehicle(vehicle);
-                GarageUtil.SaveVgVehicleToSql(vehicle.lockedOwner.m_SteamID, "Drown", "Drowned", vehicle,
+                var vName = vehicles[i].asset.vehicleName;
+                var vId = vehicles[i].asset.id;
+                var vOwner = vehicles[i].lockedOwner;
+                var drownedVehicleRegion = BarricadeManager.getRegionFromVehicle(vehicles[i]);
+                GarageUtil.SaveVgVehicleToSql(vOwner.m_SteamID, "Drown", "Drowned", vehicles[i],
                     drownedVehicleRegion);
+                if (UnturnedPlayer.FromCSteamID(vOwner) != null)
+                    UnturnedPlayer.FromCSteamID(vOwner).SendChat(
+                        Inst.Translate("rfgarage_autogarage_drown_success", vName, vId), MsgColor,
+                        Conf.AnnouncerIconUrl);
+                Logger.LogWarning(
+                    $"[RFGarage] {vName} [{vId}] has been added automatically to {vOwner.m_SteamID}'s garage due to Drown");
             }
         }
     }

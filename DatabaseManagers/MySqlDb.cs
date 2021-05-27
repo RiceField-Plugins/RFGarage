@@ -198,6 +198,9 @@ namespace RFGarage.DatabaseManagers
         }
         public bool IsGarageFull(string steamID, GarageModel garageModel)
         {
+            if (garageModel.Slot == 0)
+                return true;
+            
             var readerResult = (List<Row>)ExecuteQuery(EQueryType.Reader,
                 $"SELECT * FROM `{TableName}` WHERE SteamID = @steamID AND GarageName = @garageName;",
                 new MySqlParameter("@steamID", steamID), new MySqlParameter("@garageName", garageModel.Name));

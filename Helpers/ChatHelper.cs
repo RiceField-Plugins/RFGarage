@@ -8,7 +8,7 @@ namespace RFGarage.Helpers
 {
     public static class ChatHelper
     {
-        public static void Broadcast(string text, Color color, string iconURL)
+        public static void Broadcast(string text, Color color, string iconURL = null)
         {
             ChatManager.serverSendMessage(text, color, null, null, EChatMode.GLOBAL, iconURL, true);
         }

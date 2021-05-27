@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using RFGarage.Enums;
+using RFGarage.Models;
 using RFGarage.Utils;
 using Rocket.API;
 using Rocket.Unturned.Chat;
@@ -20,7 +21,7 @@ namespace RFGarage.Commands
         {
             if (command.Length > 0)
             {
-                UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_invalid_parameter", Syntax), Plugin.MsgColor);
+                caller.SendChat(Plugin.Inst.Translate("rfgarage_command_invalid_parameter", Syntax), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                 return;
             }
 
@@ -29,22 +30,26 @@ namespace RFGarage.Commands
             if (!CheckResponse(player))
                 return;
             GarageUtil.LoadVgVehicleFromSql(player, "Drown", "Drowned", out var vehicle);
-            UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_gr_success", 
-                vehicle.asset.vehicleName, vehicle.asset.id, "Drown"), Plugin.MsgColor);
+            player.SendChat(Plugin.Inst.Translate("rfgarage_command_gr_success", 
+                vehicle.asset.vehicleName, vehicle.asset.id, "Drown"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
         }
         private static bool CheckResponse(UnturnedPlayer player)
         {
-            var responseType = EResponseType.SUCCESS;
-            
+            GarageUtil.GarageCheck(player, GarageModel.Parse("Drown"), out var responseType, true);
             if (!Plugin.DbManager.IsVehicleExist(player.CSteamID.m_SteamID.ToString(), "Drown", "Drowned"))
             {
                 responseType = EResponseType.DONT_HAVE_VEHICLE;
             }
-
             switch (responseType)
             {
                 case EResponseType.DONT_HAVE_VEHICLE:
-                    UnturnedChat.Say(player, Plugin.Inst.Translate("rfgarage_command_garage_no_vehicle", "Drown"), Plugin.MsgColor);
+                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_garage_no_vehicle", "Drown"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    return false;
+                case EResponseType.GARAGE_NOT_FOUND:
+                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_garage_not_found"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    return false;
+                case EResponseType.GARAGE_NO_PERMISSION:
+                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_garage_no_permission", "Drown", "garage.drown"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return false;
                 case EResponseType.SUCCESS:
                     return true;

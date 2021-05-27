@@ -18,7 +18,7 @@ namespace RFGarage.Commands
         public string Name => "garagelist";
         public string Help => "Check your garage's contents.";
         public string Syntax => "/garagelist | /garagelist <garageName>";
-        public List<string> Aliases => new List<string> {"glist", "vglist"};
+        public List<string> Aliases => new List<string> { "gl", "glist", "vglist"};
         public List<string> Permissions => new List<string> {"garagelist"};
         public void Execute(IRocketPlayer caller, string[] command)
         {

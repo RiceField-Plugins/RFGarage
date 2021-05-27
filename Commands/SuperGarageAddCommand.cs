@@ -16,7 +16,7 @@ namespace RFGarage.Commands
         public string Name => "supergarageadd";
         public string Help => "Add vehicle to specified player virtual garage with Superaccess.";
         public string Syntax => "/supergarageadd <steamID> <garageName> <vehicleName>";
-        public List<string> Aliases => new List<string> {"sgadd"};
+        public List<string> Aliases => new List<string> {"sga"};
         public List<string> Permissions => new List<string> {"supergarageadd"};
         public void Execute(IRocketPlayer caller, string[] command)
         {

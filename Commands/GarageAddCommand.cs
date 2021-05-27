@@ -17,7 +17,7 @@ namespace RFGarage.Commands
         public string Name => "garageadd";
         public string Help => "Add vehicle to your virtual garage.";
         public string Syntax => "/garageadd <garageName> <vehicleName> | /garageadd <vehicleName>";
-        public List<string> Aliases => new List<string> {"gadd", "vgadd"};
+        public List<string> Aliases => new List<string> { "ga", "gadd", "vgadd"};
         public List<string> Permissions => new List<string> {"garageadd"};
         public void Execute(IRocketPlayer caller, string[] command)
         {
