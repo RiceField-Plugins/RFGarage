@@ -67,7 +67,7 @@ namespace RFGarage.Commands
             switch (responseType)
             {
                 case EResponseType.DONT_HAVE_VEHICLE:
-                    garageModel = GarageModel.Parse(commands?[0]);
+                    garageModel = commands.Length == 2 ? GarageModel.Parse(commands[0]) : Plugin.SelectedGarageDict[player.CSteamID];
                     player.SendChat(Plugin.Inst.Translate("rfgarage_command_garage_no_vehicle", garageModel.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return false;
                 case EResponseType.GARAGE_NOT_FOUND:
