@@ -67,13 +67,15 @@ namespace RFGarage.Serialization
             var vehicle = VehicleManager.spawnLockedVehicleForPlayerV2(ID, position, rotation, player.Player);
             
             // Set Fuel
-            vehicle.tellFuel(Fuel);
+            VehicleManager.sendVehicleFuel(vehicle, Fuel);
             
             // Set Health
-            vehicle.tellHealth(Health);
-            
+            VehicleManager.sendVehicleHealth(vehicle, Health);
+
             // Set Battery Charge
-            vehicle.tellBatteryCharge(BatteryCharge);
+            VehicleManager.sendVehicleBatteryCharge(vehicle, BatteryCharge);
+            // vehicle.tellBatteryCharge(BatteryCharge);
+            // vehicle.sendBatteryChargeUpdate();
 
             // Set Tires
             for (var i = 0; i < (Tires?.Length ?? 0); i++)

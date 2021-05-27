@@ -47,7 +47,7 @@ namespace RFGarage
                     _drownCheckCor = StartCoroutine(AutoCheck());
                 }
 
-                Level.onLevelLoaded += OnLevelLoadedEvent;
+                Level.onPostLevelLoaded += OnPostLevelLoadedEvent;
                 U.Events.OnPlayerConnected += PlayerEvent.OnConnected;
                 U.Events.OnPlayerDisconnected += PlayerEvent.OnDisconnected;
                 VehicleManager.OnVehicleExploded += VehicleEvent.OnExploded;
@@ -56,7 +56,7 @@ namespace RFGarage
                 Logger.LogError("[RFGarage] Plugin: DISABLED");
             
             Logger.LogWarning("[RFGarage] Plugin loaded successfully!");
-            Logger.LogWarning("[RFGarage] RFGarage v1.0.6");
+            Logger.LogWarning("[RFGarage] RFGarage v1.0.7");
             Logger.LogWarning("[RFGarage] Made with 'rice' by RiceField Plugins!");
         }
         protected override void Unload()
@@ -72,7 +72,7 @@ namespace RFGarage
                     StopCoroutine(_drownCheckCor);
                 }
             
-                Level.onLevelLoaded -= OnLevelLoadedEvent;
+                Level.onLevelLoaded -= OnPostLevelLoadedEvent;
                 U.Events.OnPlayerConnected -= PlayerEvent.OnConnected;
                 U.Events.OnPlayerDisconnected -= PlayerEvent.OnDisconnected;
                 VehicleManager.OnVehicleExploded -= VehicleEvent.OnExploded;
@@ -125,8 +125,9 @@ namespace RFGarage
                 {"rfgarage_command_vehicle_not_found", "[RFGarage] Vehicle object not found! Try again or do command inside vehicle!"},
             };
         
-        public void OnLevelLoadedEvent(int level)
+        public void OnPostLevelLoadedEvent(int level)
         {
+            Conf.VirtualGarages.Add(new GarageModel("Drown", Conf.DrownGarageSlot, "garage.drown"));
             if (Conf.CheckDrownedIntervalSeconds >= Provider.modeConfigData.Vehicles.Respawn_Time)
             {
                 if (Provider.modeConfigData.Vehicles.Respawn_Time - 1 <= 0)
