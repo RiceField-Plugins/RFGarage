@@ -48,7 +48,7 @@ namespace RFGarage
             VehicleManager.OnVehicleExploded += VehicleEvent.OnExploded;
             
             Logger.LogWarning("[RFGarage] Plugin loaded successfully!");
-            Logger.LogWarning("[RFGarage] RFGarage v1.0.3");
+            Logger.LogWarning("[RFGarage] RFGarage v1.0.4");
             Logger.LogWarning("[RFGarage] Made with 'rice' by RiceField Plugins!");
         }
         protected override void Unload()
