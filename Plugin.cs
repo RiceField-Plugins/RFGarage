@@ -56,7 +56,7 @@ namespace RFGarage
                 Logger.LogError("[RFGarage] Plugin: DISABLED");
             
             Logger.LogWarning("[RFGarage] Plugin loaded successfully!");
-            Logger.LogWarning("[RFGarage] RFGarage v1.0.7");
+            Logger.LogWarning("[RFGarage] RFGarage v1.0.8");
             Logger.LogWarning("[RFGarage] Made with 'rice' by RiceField Plugins!");
         }
         protected override void Unload()
@@ -168,6 +168,9 @@ namespace RFGarage
                 var vName = vehicles[i].asset.vehicleName;
                 var vId = vehicles[i].asset.id;
                 var vOwner = vehicles[i].lockedOwner;
+                var vehicleCount = DbManager.GetVehicleCount(vOwner.m_SteamID.ToString(), "Drown");
+                if (vehicleCount >= Conf.DrownGarageSlot && Conf.DrownGarageSlot != -1)
+                    continue;
                 var drownedVehicleRegion = BarricadeManager.getRegionFromVehicle(vehicles[i]);
                 GarageUtil.SaveVgVehicleToSql(vOwner.m_SteamID, "Drown", "Drowned", vehicles[i],
                     drownedVehicleRegion);

@@ -74,8 +74,6 @@ namespace RFGarage.Serialization
 
             // Set Battery Charge
             VehicleManager.sendVehicleBatteryCharge(vehicle, BatteryCharge);
-            // vehicle.tellBatteryCharge(BatteryCharge);
-            // vehicle.sendBatteryChargeUpdate();
 
             // Set Tires
             for (var i = 0; i < (Tires?.Length ?? 0); i++)

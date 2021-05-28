@@ -18,7 +18,7 @@ namespace RFGarage
         public string AnnouncerIconUrl;
         public bool AutoGarageDrownedVehicles;
         public float CheckDrownedIntervalSeconds;
-        public uint DrownGarageSlot;
+        public int DrownGarageSlot;
         public bool AutoClearDestroyedVehicles;
         [XmlArrayItem("Garage")]
         public List<GarageModel> VirtualGarages;
@@ -42,7 +42,7 @@ namespace RFGarage
             AnnouncerIconUrl = "https://i.imgur.com/3KlgN14.png";
             AutoGarageDrownedVehicles = true;
             CheckDrownedIntervalSeconds = 5f;
-            DrownGarageSlot = 0;
+            DrownGarageSlot = -1;
             AutoClearDestroyedVehicles = true;
             VirtualGarages = new List<GarageModel>
             {

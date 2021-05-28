@@ -12,14 +12,14 @@ namespace RFGarage.Models
         [XmlAttribute]
         public string Name;
         [XmlAttribute]
-        public uint Slot;
+        public int Slot;
         [XmlAttribute]
         public string Permission;
 
         public GarageModel()
         {
         }
-        public GarageModel(string name, uint slot, string permission)
+        public GarageModel(string name, int slot, string permission)
         {
             Name = name;
             Slot = slot;
