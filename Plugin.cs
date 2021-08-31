@@ -106,6 +106,7 @@ namespace RFGarage
                 {"rfgarage_command_garage_no_permission", "[RFGarage] You are not allowed to use {0} Garage ({1})!"},
                 {"rfgarage_command_garage_no_vehicle", "[RFGarage] You don't have any vehicle in {0} Garage! Check /glist"},
                 {"rfgarage_command_garage_not_found", "[RFGarage] Garage not found! Check /glist"},
+                {"rfgarage_command_gd_success", "[RFGarage] Successfully deleted {0} [{1}] from {2} Garage!"},
                 {"rfgarage_command_glist_garages_success", "[RFGarage] Available Garages: {0}"},
                 {"rfgarage_command_glist_garage_success", "[RFGarage] {0} Garage: {1}"},
                 {"rfgarage_command_gr_all_ask_confirm", "[RFGarage] Are you sure you want to retrieve all of your vehicles? /grall confirm | abort"},
@@ -161,9 +162,9 @@ namespace RFGarage
             var vehicles = VehicleManager.vehicles;
             for (var i = vehicles.Count - 1; i >= 0; i--)
             {
-                if (!VehicleUtil.VehicleHasOwner(vehicles[i]))
-                    continue;
                 if (!vehicles[i].isDrowned)
+                    continue;
+                if (!VehicleUtil.VehicleHasOwner(vehicles[i]))
                     continue;
                 var vName = vehicles[i].asset.vehicleName;
                 var vId = vehicles[i].asset.id;
@@ -171,9 +172,9 @@ namespace RFGarage
                 var vehicleCount = DbManager.GetVehicleCount(vOwner.m_SteamID.ToString(), "Drown");
                 if (vehicleCount >= Conf.DrownGarageSlot && Conf.DrownGarageSlot != -1)
                     continue;
+                VehicleUtil.ForceExitPassenger(vehicles[i]);
                 var drownedVehicleRegion = BarricadeManager.getRegionFromVehicle(vehicles[i]);
-                GarageUtil.SaveVgVehicleToSql(vOwner.m_SteamID, "Drown", "Drowned", vehicles[i],
-                    drownedVehicleRegion);
+                GarageUtil.SaveVgVehicleToSql(vOwner.m_SteamID, "Drown", "Drowned", vehicles[i]);
                 if (UnturnedPlayer.FromCSteamID(vOwner) != null)
                     UnturnedPlayer.FromCSteamID(vOwner).SendChat(
                         Inst.Translate("rfgarage_autogarage_drown_success", vName, vId), MsgColor,

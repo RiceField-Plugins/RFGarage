@@ -75,8 +75,7 @@ namespace RFGarage.Commands
                                 while (i < (garage.Slot - occupiedSlot) && vehicleIndex < passedVehicles.Count)
                                 {
                                     GarageUtil.SaveVgVehicleToSql(player.CSteamID.m_SteamID, garage.Name, 
-                                        passedVehicles[vehicleIndex].asset.name, passedVehicles[vehicleIndex], 
-                                        BarricadeManager.getRegionFromVehicle(passedVehicles[vehicleIndex]));
+                                        passedVehicles[vehicleIndex].asset.name, passedVehicles[vehicleIndex]);
                                     successVehicles.Add(passedVehicles[vehicleIndex]);
                                     vehicleIndex++;
                                     i++;

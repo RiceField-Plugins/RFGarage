@@ -294,7 +294,7 @@ namespace RFGarage.Utils
                 Logger.LogError("[RFGarage] LoadError: " + e);
             }
         }
-        public static void SaveVgVehicleToSql(ulong steamID, string garageName, string vehicleName, InteractableVehicle vehicle, BarricadeRegion vehicleRegion)
+        public static void SaveVgVehicleToSql(ulong steamID, string garageName, string vehicleName, InteractableVehicle vehicle)
         {
             try
             {
@@ -307,6 +307,20 @@ namespace RFGarage.Utils
             catch (Exception e)
             {
                 Logger.LogError("[RFGarage] SaveError: " + e);
+            }
+        }
+        public static void DeleteVgVehicleFromSql(UnturnedPlayer player, string garageName, string vehicleName, out PlayerSerializableVehicleModel playerVgVehicle, string steamID = "")
+        {
+            playerVgVehicle = null;
+            try
+            {
+                playerVgVehicle = Plugin.DbManager.ReadVgVehicleByVehicleName(steamID == "" ? 
+                    player.CSteamID.m_SteamID.ToString() : steamID, garageName, vehicleName);
+                Plugin.DbManager.DeleteVgVehicle(playerVgVehicle.EntryID);
+            }
+            catch (Exception e)
+            {
+                Logger.LogError("[RFGarage] LoadError: " + e);
             }
         }
     }

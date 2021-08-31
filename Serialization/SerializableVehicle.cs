@@ -5,6 +5,7 @@ using Rocket.Unturned.Player;
 using SDG.Unturned;
 using UnityEngine;
 using RFGarage.Utils;
+using Steamworks;
 
 namespace RFGarage.Serialization
 {
@@ -20,6 +21,7 @@ namespace RFGarage.Serialization
         public List<byte[]> Turrets { get; set; }
         public List<SerializableItem> TrunkItems { get; set; } = new List<SerializableItem>();
         public List<SerializableBarricade> Barricades { get; set; } = new List<SerializableBarricade>();
+        public ulong Group { get; set; }
 
         public SerializableVehicle()
         {
@@ -48,7 +50,8 @@ namespace RFGarage.Serialization
                     vehicle.trunkItems?.items?.Select(c => SerializableItem.Create(vehicle.trunkItems.page, c)).ToList() ??
                     new List<SerializableItem>(),
                 Tires = vehicle.tires?.Select(c => c.isAlive)?.ToArray() ?? new bool[0],
-                Turrets = vehicleTurret
+                Turrets = vehicleTurret,
+                Group = vehicle.lockedGroup.m_SteamID,
             };
             
             if (BarricadeManager.tryGetPlant(vehicle.transform, out _, out _, out _, out var region))
@@ -66,14 +69,22 @@ namespace RFGarage.Serialization
             // Spawn Vehicle
             var vehicle = VehicleManager.spawnLockedVehicleForPlayerV2(ID, position, rotation, player.Player);
             
+            // Set Group
+            VehicleManager.ServerSetVehicleLock(vehicle, player.CSteamID, new CSteamID(Group), true);
+            
             // Set Fuel
-            VehicleManager.sendVehicleFuel(vehicle, Fuel);
+            //VehicleManager.sendVehicleFuel(vehicle, Fuel);
+            VehicleManager.instance.channel.send("tellVehicleFuel", ESteamCall.ALL,
+                ESteamPacket.UPDATE_UNRELIABLE_BUFFER, vehicle.instanceID, Fuel);
+            //vehicle.fuel = Fuel;
             
             // Set Health
             VehicleManager.sendVehicleHealth(vehicle, Health);
+            vehicle.health = Health;
 
             // Set Battery Charge
             VehicleManager.sendVehicleBatteryCharge(vehicle, BatteryCharge);
+            vehicle.batteryCharge = BatteryCharge;
 
             // Set Tires
             for (var i = 0; i < (Tires?.Length ?? 0); i++)

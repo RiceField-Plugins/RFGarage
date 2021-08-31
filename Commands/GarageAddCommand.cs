@@ -38,7 +38,7 @@ namespace RFGarage.Commands
                     if (!CheckResponse(player, command, out var vehicle, out var vehicleRegion))
                         return;
                     var garage = Plugin.SelectedGarageDict[player.CSteamID];
-                    GarageUtil.SaveVgVehicleToSql(player.CSteamID.m_SteamID, garage.Name, command[0], vehicle, vehicleRegion);
+                    GarageUtil.SaveVgVehicleToSql(player.CSteamID.m_SteamID, garage.Name, command[0], vehicle);
                     caller.SendChat(Plugin.Inst.Translate("rfgarage_command_gadd_success", vehicle.asset.vehicleName, vehicle.asset.id, garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return;
                 }
@@ -50,7 +50,7 @@ namespace RFGarage.Commands
                     if (!CheckResponse(player, command, out var vehicle, out var vehicleRegion))
                         return;
                     var garage = GarageModel.Parse(command[0]);
-                    GarageUtil.SaveVgVehicleToSql(player.CSteamID.m_SteamID, garage.Name, command[1], vehicle, vehicleRegion);
+                    GarageUtil.SaveVgVehicleToSql(player.CSteamID.m_SteamID, garage.Name, command[1], vehicle);
                     caller.SendChat(Plugin.Inst.Translate("rfgarage_command_gadd_success", vehicle.asset.vehicleName, vehicle.asset.id, garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return;
                 }

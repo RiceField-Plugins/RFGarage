@@ -30,7 +30,7 @@ namespace RFGarage.Commands
             if (!CheckResponse(player, command, out var vehicle, out var vehicleRegion))
                 return;
             var garage = GarageModel.Parse(command[1]);
-            GarageUtil.SaveVgVehicleToSql(ulong.Parse(command[0]), garage.Name, command[2], vehicle, vehicleRegion);
+            GarageUtil.SaveVgVehicleToSql(ulong.Parse(command[0]), garage.Name, command[2], vehicle);
             UnturnedChat.Say(caller, Plugin.Inst.Translate("rfgarage_command_sgadd_success", vehicle.asset.vehicleName, vehicle.asset.id, garage.Name), Plugin.MsgColor);
         }
 

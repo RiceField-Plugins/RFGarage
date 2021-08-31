@@ -1,24 +1,22 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RFGarage.Enums;
 using RFGarage.Models;
 using RFGarage.Utils;
 using Rocket.API;
-using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
-using SDG.Unturned;
 
 namespace RFGarage.Commands
 {
-    public class GarageRetrieveCommand : IRocketCommand
+    public class GarageDeleteCommand : IRocketCommand
     {
         public AllowedCaller AllowedCaller => AllowedCaller.Player;
-        public string Name => "garageretrieve";
-        public string Help => "Retrieve your vehicle from the virtual garage.";
-        public string Syntax => "/garageretrieve <garageName> <vehicleName> | /garageretrieve <vehicleName>";
-        public List<string> Aliases => new List<string> {"gr", "vgr"};
-        public List<string> Permissions => new List<string> {"garageretrieve"};
+        public string Name => "garagedelete";
+        public string Help => "Delete garage record permanently.";
+        public string Syntax => "/garagedelete <garageName> <vehicleName> | /garagedelete <vehicleName>";
+        public List<string> Aliases => new List<string> {"gd", "vgd"};
+        public List<string> Permissions => new List<string> {"garagedelete"};
         public void Execute(IRocketPlayer caller, string[] command)
         {
             if (command.Length > 2 || command.Length == 0)
@@ -38,8 +36,8 @@ namespace RFGarage.Commands
                     if (!CheckResponse(player, command))
                         return;
                     var garage = Plugin.SelectedGarageDict[player.CSteamID];
-                    GarageUtil.LoadVgVehicleFromSql(player, garage.Name, command[0], out var vehicle);
-                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_gr_success", vehicle.asset.vehicleName, vehicle.asset.id, garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    GarageUtil.DeleteVgVehicleFromSql(player, garage.Name, command[0], out var vehicle);
+                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_gd_success", vehicle.VehicleName, vehicle.EntryID, garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return;
                 }
                 case 1:
@@ -50,8 +48,8 @@ namespace RFGarage.Commands
                 case 2:
                 {
                     var garage = GarageModel.Parse(command[0]);
-                    GarageUtil.LoadVgVehicleFromSql(player, garage.Name, command[1], out var vehicle);
-                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_gr_success", vehicle.asset.vehicleName, vehicle.asset.id, garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    GarageUtil.DeleteVgVehicleFromSql(player, garage.Name, command[1], out var vehicle);
+                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_gd_success", vehicle.VehicleName, vehicle.EntryID, garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return;
                 }
                 default:
@@ -78,7 +76,7 @@ namespace RFGarage.Commands
                     player.SendChat(Plugin.Inst.Translate("rfgarage_command_garage_no_permission", garageModel.Name, garageModel.Permission), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return false;
                 case EResponseType.GARAGE_NOT_SELECTED:
-                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_gr_garage_not_selected"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_gd_garage_not_selected"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                     return false;
                 case EResponseType.SUCCESS:
                     return true;
