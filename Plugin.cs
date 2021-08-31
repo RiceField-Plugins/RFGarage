@@ -56,7 +56,7 @@ namespace RFGarage
                 Logger.LogError("[RFGarage] Plugin: DISABLED");
             
             Logger.LogWarning("[RFGarage] Plugin loaded successfully!");
-            Logger.LogWarning("[RFGarage] RFGarage v1.0.8");
+            Logger.LogWarning("[RFGarage] RFGarage v1.0.9");
             Logger.LogWarning("[RFGarage] Made with 'rice' by RiceField Plugins!");
         }
         protected override void Unload()
