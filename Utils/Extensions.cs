@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Linq;
-using RFGarage.Serialization;
 using Rocket.API;
-using Rocket.Core;
 using Rocket.Unturned.Player;
-using SDG.Unturned;
-using Steamworks;
-using UnityEngine;
 
-namespace RFGarage.Utils
+namespace RFGarageClassic.Utils
 {
     public static class Extensions
     {
@@ -16,38 +11,24 @@ namespace RFGarage.Utils
         {
             return Convert.ToBase64String(byteArray);
         }
+
         public static byte[] ToByteArray(this string base64)
         {
             return Convert.FromBase64String(base64);
         }
-        
-        public static string ToInfo(this SerializableVehicle serializableVehicle)
+
+        public static int GetGarageSlot(this UnturnedPlayer player)
         {
-            var byteArray = serializableVehicle.Serialize();
-            return byteArray.ToBase64();
+            var slot = player.GetPermissions()?.FirstOrDefault(p =>
+                p.Name.ToLower().StartsWith($"{Plugin.Conf.GarageSlotPermissionPrefix}."))?.Name?.Split('.').LastOrDefault();
+            return slot == null ? Plugin.Conf.DefaultGarageSlot : Convert.ToInt32(slot);
         }
-        public static SerializableVehicle ToVgVehicle(this string info)
+
+        public static int GetGarageSlot(this RocketPlayer player)
         {
-            var byteArray = info.ToByteArray();
-            return byteArray.Deserialize<SerializableVehicle>();
-        }
-        
-        public static bool CheckPermission(this UnturnedPlayer player, string permission)
-        {
-            return player.HasPermission(permission) || player.IsAdminOrAsterisk();
-        }
-        public static bool IsAdminOrAsterisk(this UnturnedPlayer player)
-        {
-            return player.HasPermission("*") || player.IsAdmin;
-        }
-        
-        public static void SendChat(this UnturnedPlayer player, string text, Color color, string iconURL = null)
-        {
-            ChatManager.serverSendMessage(text, color, null, player.SteamPlayer(), EChatMode.SAY, iconURL, true);
-        }
-        public static void SendChat(this IRocketPlayer player, string text, Color color, string iconURL = null)
-        {
-            ChatManager.serverSendMessage(text, color, null, PlayerTool.getSteamPlayer(new CSteamID(ulong.Parse(player.Id))), EChatMode.SAY, iconURL, true);
+            var slot = player.GetPermissions()?.FirstOrDefault(p =>
+                p.Name.ToLower().StartsWith($"{Plugin.Conf.GarageSlotPermissionPrefix}."))?.Name?.Split('.').LastOrDefault();
+            return slot == null ? Plugin.Conf.DefaultGarageSlot : Convert.ToInt32(slot);
         }
     }
 }

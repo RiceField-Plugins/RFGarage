@@ -1,101 +1,75 @@
 ﻿using System.Collections.Generic;
-using System.Xml.Serialization;
-using RFGarage.Models;
+using RFGarageClassic.Enums;
+using RFGarageClassic.Models;
 using Rocket.API;
 
-namespace RFGarage
+namespace RFGarageClassic
 {
     public class Configuration : IRocketPluginConfiguration
     {
         public bool Enabled;
-        public string DatabaseAddress;
-        public uint DatabasePort;
-        public string DatabaseUsername;
-        public string DatabasePassword;
-        public string DatabaseName;
-        public string DatabaseTableName;
+        public EDatabase Database;
+        public string MySqlConnectionString;
         public string MessageColor;
         public string AnnouncerIconUrl;
-        public bool AutoGarageDrownedVehicles;
-        public float CheckDrownedIntervalSeconds;
-        public int DrownGarageSlot;
         public bool AutoClearDestroyedVehicles;
-        [XmlArrayItem("Garage")]
-        public List<GarageModel> VirtualGarages;
-        [XmlArray, XmlArrayItem("Barricades")]
-        public List<BlacklistModel> BlacklistedBarricades;
-        [XmlArray, XmlArrayItem("TrunkItems")]
-        public List<BlacklistModel> BlacklistedTrunkItems;
-        [XmlArray, XmlArrayItem("Vehicles")]
-        public List<BlacklistModel> BlacklistedVehicles;
+        public bool AutoAddOnDrown;
+        public string AutoAddOnDrownPermission;
+        public bool AllowTrain;
+        public int DefaultGarageSlot;
+        public string GarageSlotPermissionPrefix;
+        public List<Blacklist> Blacklists;
         
         public void LoadDefaults()
         {
             Enabled = false;
-            DatabaseAddress = "127.0.0.1";
-            DatabasePort = 3306;
-            DatabaseUsername = "root";
-            DatabasePassword = "123456";
-            DatabaseName = "unturned";
-            DatabaseTableName = "rfgarage";
+            Database = EDatabase.LITEDB;
+            MySqlConnectionString = "SERVER=127.0.0.1;DATABASE=unturned;UID=root;PASSWORD=123456;PORT=3306;TABLENAME=rfgarage;";
             MessageColor = "magenta";
             AnnouncerIconUrl = "https://i.imgur.com/3KlgN14.png";
-            AutoGarageDrownedVehicles = true;
-            CheckDrownedIntervalSeconds = 5f;
-            DrownGarageSlot = -1;
             AutoClearDestroyedVehicles = true;
-            VirtualGarages = new List<GarageModel>
+            AutoAddOnDrown = true;
+            AutoAddOnDrownPermission = "garagedrown";
+            AllowTrain = false;
+            DefaultGarageSlot = 5;
+            GarageSlotPermissionPrefix = "garageslot";
+            Blacklists = new List<Blacklist>
             {
-                new GarageModel
+                new Blacklist
                 {
-                    Name = "Small",
-                    Slot = 4,
-                    Permission = "garage.small",
+                    Type = EBlacklistType.BARRICADE,
+                    BypassPermission = "garagebypass.barricade.example",
+                    IdList = new List<ushort> {1, 2}
                 },
-                new GarageModel
+                new Blacklist
                 {
-                    Name = "Medium",
-                    Slot = 7,
-                    Permission = "garage.medium",
+                    Type = EBlacklistType.ITEM,
+                    BypassPermission = "garagebypass.item.example",
+                    IdList = new List<ushort> {1, 2}
                 },
-            };
-            BlacklistedBarricades = new List<BlacklistModel> 
-            {
-                new BlacklistModel
+                new Blacklist
                 {
-                    BypassPermission = "garagebypass.barricade.example", 
-                    Assets = new List<AssetModel> {new AssetModel(1), new AssetModel(2)},
+                    Type = EBlacklistType.VEHICLE,
+                    BypassPermission = "garagebypass.vehicle.example",
+                    IdList = new List<ushort> {1, 2}
                 },
-                new BlacklistModel
+                new Blacklist
                 {
-                    BypassPermission = "garagebypass.barricade.example1", 
-                    Assets = new List<AssetModel> {new AssetModel(1), new AssetModel(2)},
+                    Type = EBlacklistType.BARRICADE,
+                    BypassPermission = "garagebypass.barricade.example2",
+                    IdList = new List<ushort> {3, 4}
                 },
-            };
-            BlacklistedTrunkItems = new List<BlacklistModel> 
-            {
-                new BlacklistModel
+                new Blacklist
                 {
-                    BypassPermission = "garagebypass.trunk.example", 
-                    Assets = new List<AssetModel> {new AssetModel(1), new AssetModel(2)},
+                    Type = EBlacklistType.ITEM,
+                    BypassPermission = "garagebypass.item.example2",
+                    IdList = new List<ushort> {3, 4}
                 },
-                new BlacklistModel
+                new Blacklist
                 {
-                    BypassPermission = "garagebypass.trunk.example1", 
-                    Assets = new List<AssetModel> {new AssetModel(1), new AssetModel(2)},
-                },
-            };
-            BlacklistedVehicles = new List<BlacklistModel> 
-            {
-                new BlacklistModel
-                {
-                    BypassPermission = "garagebypass.vehicle.example", 
-                    Assets = new List<AssetModel> {new AssetModel(1), new AssetModel(2)},
-                },
-                new BlacklistModel
-                {
-                    BypassPermission = "garagebypass.vehicle.example1", 
-                    Assets = new List<AssetModel> {new AssetModel(1), new AssetModel(2)},
+                    Type = EBlacklistType.VEHICLE,
+                    BypassPermission = "garagebypass.vehicle.example2",
+                    IdList = new List<ushort> {3, 4}
                 },
             };
         }

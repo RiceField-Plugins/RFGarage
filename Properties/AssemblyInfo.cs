@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("RFGarage")]
+[assembly: AssemblyTitle("RFGarageClassic")]
 [assembly: AssemblyDescription("RiceField Plugins")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("RiceField Plugins")]
-[assembly: AssemblyProduct("RFGarage")]
+[assembly: AssemblyProduct("RFGarageClassic")]
 [assembly: AssemblyCopyright("Copyright © RiceField Plugins 2021")]
 [assembly: AssemblyTrademark("RiceField Plugins")]
 [assembly: AssemblyCulture("")]

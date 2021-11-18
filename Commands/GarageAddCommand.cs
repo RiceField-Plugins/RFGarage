@@ -1,115 +1,166 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Linq;
-using RFGarage.Enums;
-using RFGarage.Models;
-using RFGarage.Utils;
+using System.Threading.Tasks;
+using RFGarageClassic.Enums;
+using RFGarageClassic.Models;
+using RFGarageClassic.Utils;
+using RFRocketLibrary.Models;
+using RFRocketLibrary.Plugins;
+using RFRocketLibrary.Utils;
 using Rocket.API;
-using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
+using UnityEngine;
+using AllowedCaller = RFRocketLibrary.Plugins.AllowedCaller;
+using VehicleUtil = RFGarageClassic.Utils.VehicleUtil;
 
-namespace RFGarage.Commands
+namespace RFGarageClassic.Commands
 {
-    public class GarageAddCommand : IRocketCommand
+    [AllowedCaller(Rocket.API.AllowedCaller.Player)]
+    [RFRocketLibrary.Plugins.CommandName("garageadd")]
+    [Permissions("garageadd")]
+    [Aliases("gadd", "ga")]
+    [CommandInfo("Store vehicle to garage.", "/garageadd [vehicleName]")]
+    public class GarageAddCommand : RocketCommand
     {
-        public AllowedCaller AllowedCaller => AllowedCaller.Player;
-        public string Name => "garageadd";
-        public string Help => "Add vehicle to your virtual garage.";
-        public string Syntax => "/garageadd <garageName> <vehicleName> | /garageadd <vehicleName>";
-        public List<string> Aliases => new List<string> { "ga", "gadd", "vgadd"};
-        public List<string> Permissions => new List<string> {"garageadd"};
-        public void Execute(IRocketPlayer caller, string[] command)
+        public override async Task ExecuteAsync(CommandContext context)
         {
-            if (command.Length > 2 || command.Length == 0)
+            var player = (UnturnedPlayer) context.Player;
+            var vehicle = player.CurrentVehicle;
+            if (vehicle == null)
             {
-                caller.SendChat(Plugin.Inst.Translate("rfgarage_command_invalid_parameter", Syntax), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                if (!player.GetRaycastHit(Mathf.Infinity, RayMasks.VEHICLE, out var hit) ||
+                    hit.transform == null || hit.transform.GetComponent<InteractableVehicle>() == null)
+                {
+                    await context.ReplyAsync(Plugin.Inst.Translate(EResponse.NO_VEHICLE_INPUT.ToString()),
+                        Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    return;
+                }
+
+                vehicle = hit.transform.GetComponent<InteractableVehicle>();
+            }
+
+            if (vehicle.lockedOwner.m_SteamID != player.CSteamID.m_SteamID)
+            {
+                await context.ReplyAsync(Plugin.Inst.Translate(EResponse.VEHICLE_NOT_OWNED.ToString()),
+                    Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
                 return;
             }
 
-            var player = (UnturnedPlayer) caller;
-            switch (command.Length)
+            var slot = player.GetGarageSlot();
+            if (Plugin.Inst.Database.GarageManager.Count(player.CSteamID.m_SteamID) >= slot)
             {
-                case 1 when Plugin.Conf.VirtualGarages.Any(g => string.Equals(g.Name, command[0], StringComparison.CurrentCultureIgnoreCase)):
-                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_invalid_parameter", Syntax), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
-                    return;
-                case 1 when !Plugin.Conf.VirtualGarages.Any(g => string.Equals(g.Name, command[0], StringComparison.CurrentCultureIgnoreCase)):
-                {
-                    if (!CheckResponse(player, command, out var vehicle, out var vehicleRegion))
-                        return;
-                    var garage = Plugin.SelectedGarageDict[player.CSteamID];
-                    GarageUtil.SaveVgVehicleToSql(player.CSteamID.m_SteamID, garage.Name, command[0], vehicle);
-                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_gadd_success", vehicle.asset.vehicleName, vehicle.asset.id, garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
-                    return;
-                }
-                case 1:
-                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_invalid_parameter"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
-                    return;
-                case 2:
-                {
-                    if (!CheckResponse(player, command, out var vehicle, out var vehicleRegion))
-                        return;
-                    var garage = GarageModel.Parse(command[0]);
-                    GarageUtil.SaveVgVehicleToSql(player.CSteamID.m_SteamID, garage.Name, command[1], vehicle);
-                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_gadd_success", vehicle.asset.vehicleName, vehicle.asset.id, garage.Name), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
-                    return;
-                }
-                default:
-                    caller.SendChat(Plugin.Inst.Translate("rfgarage_command_invalid_parameter"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
-                    break;
+                await context.ReplyAsync(Plugin.Inst.Translate(EResponse.GARAGE_FULL.ToString(), slot),
+                    Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                return;
             }
-        }
 
-        private static bool CheckResponse(UnturnedPlayer player, string[] commands, out InteractableVehicle vehicle, out BarricadeRegion vehicleRegion)
-        {
-            GarageUtil.GarageAddChecks(player, commands, out vehicle, out vehicleRegion, out var responseType,
-                out var blacklistedID);
-            GarageModel garageModel;
-            switch (responseType)
+            if (!Plugin.Conf.AllowTrain && vehicle.asset.engine == EEngine.TRAIN)
             {
-                case EResponseType.VEHICLE_NOT_FOUND:
-                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_vehicle_not_found"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
-                    return false;
-                case EResponseType.GARAGE_NOT_FOUND:
-                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_garage_not_found"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
-                    return false;
-                case EResponseType.VEHICLE_NOT_OWNER:
-                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_gadd_vehicle_not_owner"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
-                    return false;
-                case EResponseType.GARAGE_FULL:
-                    garageModel = Plugin.SelectedGarageDict[player.CSteamID];
-                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_gadd_garage_full", garageModel.Name, garageModel.Slot), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
-                    return false;
-                case EResponseType.GARAGE_NO_PERMISSION:
-                    garageModel = GarageModel.Parse(commands?[0]);
-                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_garage_no_permission", garageModel.Name, garageModel.Permission), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
-                    return false;
-                case EResponseType.BLACKLIST_VEHICLE:
-                    var vehicleAsset = (VehicleAsset) Assets.find(EAssetType.VEHICLE, blacklistedID);
-                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_gadd_blacklist_vehicle", vehicleAsset.vehicleName, vehicleAsset.id), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
-                    return false;
-                case EResponseType.GARAGE_NOT_SELECTED:
-                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_gadd_garage_not_selected"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
-                    return false;
-                case EResponseType.BLACKLIST_BARRICADE:
-                    var barricadeAsset = (ItemBarricadeAsset) Assets.find(EAssetType.ITEM, blacklistedID);
-                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_gadd_blacklist_barricade", barricadeAsset.itemName, barricadeAsset.id), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
-                    return false;
-                case EResponseType.BLACKLIST_TRUNK_ITEM:
-                    var itemAsset = (ItemAsset) Assets.find(EAssetType.ITEM, blacklistedID);
-                    player.SendChat(
-                        Plugin.Inst.Translate("rfgarage_command_gadd_blacklist_trunk_item", itemAsset.itemName,
-                            itemAsset.id), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
-                    return false;
-                case EResponseType.SAME_NAME_AS_GARAGE:
-                    player.SendChat(Plugin.Inst.Translate("rfgarage_command_gadd_vehicle_name_same_as_garage"), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
-                    return false;
-                case EResponseType.SUCCESS:
-                    return true;
-                default:
-                    player.SendChat(responseType.ToString(), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
-                    return false;
+                await context.ReplyAsync(Plugin.Inst.Translate(EResponse.TRAIN_NOT_ALLOWED.ToString()),
+                    Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                return;
             }
+
+            if (Plugin.Conf.Blacklists.Any(x =>
+                x.Type == EBlacklistType.VEHICLE && !player.HasPermission(x.BypassPermission) &&
+                x.IdList.Contains(vehicle.id)))
+            {
+                await context.ReplyAsync(
+                    Plugin.Inst.Translate(EResponse.BLACKLIST_VEHICLE.ToString(), vehicle.asset.vehicleName,
+                        vehicle.asset.id), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                return;
+            }
+
+            foreach (var blacklist in Plugin.Conf.Blacklists.Where(x => x.Type == EBlacklistType.BARRICADE))
+            {
+                if (player.HasPermission(blacklist.BypassPermission))
+                    continue;
+                var region = BarricadeManager.getRegionFromVehicle(vehicle);
+                if (region == null)
+                    continue;
+                foreach (var drop in region.drops.Where(drop => blacklist.IdList.Contains(drop.asset.id)))
+                {
+                    await context.ReplyAsync(
+                        Plugin.Inst.Translate(EResponse.BLACKLIST_BARRICADE.ToString(), drop.asset.itemName,
+                            drop.asset.id),
+                        Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    return;
+                }
+            }
+
+            foreach (var blacklist in Plugin.Conf.Blacklists.Where(x => x.Type == EBlacklistType.ITEM))
+            {
+                if (player.HasPermission(blacklist.BypassPermission))
+                    continue;
+                var region = BarricadeManager.getRegionFromVehicle(vehicle);
+                if (region == null)
+                    continue;
+                foreach (var drop in region.drops)
+                {
+                    if (!(drop.interactable is InteractableStorage storage))
+                        continue;
+                    foreach (var asset in from id in blacklist.IdList
+                        where storage.items.has(id) != null
+                        select AssetUtil.GetItemAsset(id))
+                    {
+                        await context.ReplyAsync(
+                            Plugin.Inst.Translate(EResponse.BLACKLIST_ITEM.ToString(),
+                                asset.itemName, asset.id),
+                            Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                        return;
+                    }
+                }
+            }
+
+            if (vehicle.trunkItems != null && vehicle.trunkItems.getItemCount() != 0)
+            {
+                foreach (var blacklist in Plugin.Conf.Blacklists.Where(x => x.Type == EBlacklistType.ITEM))
+                {
+                    if (player.HasPermission(blacklist.BypassPermission))
+                        continue;
+                    foreach (var asset in from itemJar in vehicle.trunkItems.items
+                        where blacklist.IdList.Contains(itemJar.item.id)
+                        select AssetUtil.GetItemAsset(itemJar.item.id))
+                    {
+                        await context.ReplyAsync(Plugin.Inst.Translate(EResponse.BLACKLIST_ITEM.ToString(),
+                            asset.itemName, asset.id), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                        return;
+                    }
+                }
+            }
+
+            vehicle.forceRemoveAllPlayers();
+            string vehicleName;
+            if (context.CommandRawArguments.Length == 0)
+            {
+                vehicleName = vehicle.asset.vehicleName;
+                await Plugin.Inst.Database.GarageManager.AddAsync(new PlayerGarage
+                {
+                    SteamId = player.CSteamID.m_SteamID,
+                    VehicleName = vehicleName,
+                    GarageContent = VehicleWrapper.Create(vehicle),
+                    LastUpdated = DateTime.Now,
+                });
+                VehicleUtil.ClearItems(vehicle);
+                VehicleManager.askVehicleDestroy(vehicle);
+                await context.ReplyAsync(Plugin.Inst.Translate(EResponse.GARAGE_ADDED.ToString(), vehicleName),
+                    Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                return;
+            }
+
+            vehicleName = string.Join(" ", context.CommandRawArguments);
+            await Plugin.Inst.Database.GarageManager.AddAsync(new PlayerGarage
+            {
+                SteamId = player.CSteamID.m_SteamID,
+                VehicleName = vehicleName,
+                GarageContent = VehicleWrapper.Create(vehicle),
+                LastUpdated = DateTime.Now,
+            });
+            VehicleUtil.ClearItems(vehicle);
+            VehicleManager.askVehicleDestroy(vehicle);
+            await context.ReplyAsync(Plugin.Inst.Translate(EResponse.GARAGE_ADDED.ToString(), vehicleName),
+                Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
         }
     }
 }
