@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using RFGarageClassic.Enums;
-using RFGarageClassic.Models;
-using RFGarageClassic.Utils;
+using RFGarage.Enums;
+using RFGarage.Models;
+using RFGarage.Utils;
 using RFRocketLibrary.Models;
 using RFRocketLibrary.Plugins;
 using RFRocketLibrary.Utils;
@@ -12,9 +12,9 @@ using Rocket.Unturned.Player;
 using SDG.Unturned;
 using UnityEngine;
 using AllowedCaller = RFRocketLibrary.Plugins.AllowedCaller;
-using VehicleUtil = RFGarageClassic.Utils.VehicleUtil;
+using VehicleUtil = RFGarage.Utils.VehicleUtil;
 
-namespace RFGarageClassic.Commands
+namespace RFGarage.Commands
 {
     [AllowedCaller(Rocket.API.AllowedCaller.Player)]
     [RFRocketLibrary.Plugins.CommandName("garageadd")]

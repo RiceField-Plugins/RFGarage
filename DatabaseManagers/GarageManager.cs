@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using RFGarageClassic.Enums;
-using RFGarageClassic.Models;
-using RFGarageClassic.Utils;
+using RFGarage.Enums;
+using RFGarage.Models;
+using RFGarage.Utils;
 using RFRocketLibrary.Models;
 using RFRocketLibrary.Storages;
 using RFRocketLibrary.Utils;
 using Logger = Rocket.Core.Logging.Logger;
 
-namespace RFGarageClassic.DatabaseManagers
+namespace RFGarage.DatabaseManagers
 {
     public class GarageManager
     {
@@ -64,7 +64,7 @@ namespace RFGarageClassic.DatabaseManagers
 
         private int Json_NewId()
         {
-            return Json_Collection.Max(x => x.Id as int?) ?? 0 + 1;
+            return (Json_Collection.Max(x => x.Id as int?) ?? 0) + 1;
         }
 
         private void JSON_Reload(bool migrate = false)

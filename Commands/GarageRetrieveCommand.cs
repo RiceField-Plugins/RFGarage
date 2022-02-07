@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
-using RFGarageClassic.Enums;
+using RFGarage.Enums;
 using RFRocketLibrary.Plugins;
 using RFRocketLibrary.Utils;
 using Rocket.Unturned.Player;
 using UnityEngine;
 
-namespace RFGarageClassic.Commands
+namespace RFGarage.Commands
 {
     [AllowedCaller(Rocket.API.AllowedCaller.Player)]
     [RFRocketLibrary.Plugins.CommandName("garageretrieve")]

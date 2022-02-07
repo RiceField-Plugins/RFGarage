@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
-using RFGarageClassic.Enums;
-using RFGarageClassic.Models;
-using RFGarageClassic.Utils;
+using RFGarage.Enums;
+using RFGarage.Models;
+using RFGarage.Utils;
 using RFRocketLibrary.Helpers;
 using RFRocketLibrary.Models;
 using Rocket.API;
 using SDG.Unturned;
 using Steamworks;
-using VehicleUtil = RFGarageClassic.Utils.VehicleUtil;
+using VehicleUtil = RFGarage.Utils.VehicleUtil;
 
-namespace RFGarageClassic.EventListeners
+namespace RFGarage.EventListeners
 {
     public static class VehicleEvent
     {

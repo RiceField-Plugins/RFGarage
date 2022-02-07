@@ -1,4 +1,4 @@
-namespace RFGarageClassic.Enums
+namespace RFGarage.Enums
 {
     public enum EDatabase
     {

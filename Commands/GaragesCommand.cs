@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
-using RFGarageClassic.Enums;
-using RFGarageClassic.Utils;
+using RFGarage.Enums;
+using RFGarage.Utils;
 using RFRocketLibrary.Plugins;
 using Rocket.Unturned.Player;
 
-namespace RFGarageClassic.Commands
+namespace RFGarage.Commands
 {
     [AllowedCaller(Rocket.API.AllowedCaller.Player)]
     [CommandName("garages")]

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using RFGarageClassic.Enums;
-using RFGarageClassic.Models;
+using RFGarage.Enums;
+using RFGarage.Models;
 using Rocket.API;
 
-namespace RFGarageClassic
+namespace RFGarage
 {
     public class Configuration : IRocketPluginConfiguration
     {

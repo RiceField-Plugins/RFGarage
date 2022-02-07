@@ -1,9 +1,9 @@
 using System;
 using System.IO;
-using RFGarageClassic.Enums;
+using RFGarage.Enums;
 using Rocket.Core.Logging;
 
-namespace RFGarageClassic.DatabaseManagers
+namespace RFGarage.DatabaseManagers
 {
     public class DatabaseManager
     {
@@ -41,8 +41,8 @@ namespace RFGarageClassic.DatabaseManagers
             }
             catch (Exception e)
             {
-                Logger.LogError("[RFLeaderboards] [ERROR] DatabaseManager Initializing: " + e.Message);
-                Logger.LogError("[RFLeaderboards] [ERROR] Details: " + e);
+                Logger.LogError("[RFGarage] [ERROR] DatabaseManager Initializing: " + e.Message);
+                Logger.LogError("[RFGarage] [ERROR] Details: " + e);
             }
         }
     }

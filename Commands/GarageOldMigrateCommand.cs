@@ -1,17 +1,17 @@
 #if DEBUG
 using System;
 using System.Threading.Tasks;
-using RFGarageClassic.DatabaseManagers;
-using RFGarageClassic.Enums;
+using RFGarage.DatabaseManagers;
+using RFGarage.Enums;
 using RFRocketLibrary.Plugins;
 
-namespace RFGarageClassic.Commands
+namespace RFGarage.Commands
 {
     [Aliases("gom")]
     [AllowedCaller(Rocket.API.AllowedCaller.Both)]
     [Permissions("garageoldmigrate")]
     [CommandInfo(Syntax: "/garageoldmigrate <to: mysql|litedb|json>",
-        Help: "Migrate garage database from Old RFGarage to RFGarageClassic.")]
+        Help: "Migrate garage database from Old RFGarage to RFGarage.")]
     public class GarageOldMigrateCommand : RocketCommand
     {
         public override async Task ExecuteAsync(CommandContext context)

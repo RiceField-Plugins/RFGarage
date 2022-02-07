@@ -2,7 +2,7 @@ using System.Linq;
 using SDG.Unturned;
 #pragma warning disable 618
 
-namespace RFGarageClassic.Utils
+namespace RFGarage.Utils
 {
     internal static class VehicleUtil
     {
@@ -25,13 +25,5 @@ namespace RFGarageClassic.Utils
                 if (drop.interactable is InteractableStorage storage)
                     storage.items.clear();
         }
-        // internal static void ForceExitPassenger(InteractableVehicle vehicle)
-        // {
-        //     foreach (var currentPlayer in vehicle.passengers.Where(c => c.player != null))
-        //     {
-        //         vehicle.forceRemovePlayer(out var seat, currentPlayer.player.playerID.steamID, out var point, out var angle);
-        //         VehicleManager.sendExitVehicle(vehicle, seat, point, angle, true);
-        //     }
-        // }
     }
 }

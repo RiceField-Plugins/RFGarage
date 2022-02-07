@@ -1,7 +1,7 @@
 using System;
 using RFRocketLibrary.Models;
 
-namespace RFGarageClassic.Models
+namespace RFGarage.Models
 {
     [Serializable]
     public class PlayerGarage

@@ -3,7 +3,7 @@ using System.Linq;
 using Rocket.API;
 using Rocket.Unturned.Player;
 
-namespace RFGarageClassic.Utils
+namespace RFGarage.Utils
 {
     public static class Extensions
     {

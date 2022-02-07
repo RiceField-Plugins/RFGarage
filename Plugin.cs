@@ -1,6 +1,6 @@
-﻿using RFGarageClassic.DatabaseManagers;
-using RFGarageClassic.Enums;
-using RFGarageClassic.EventListeners;
+﻿using RFGarage.DatabaseManagers;
+using RFGarage.Enums;
+using RFGarage.EventListeners;
 using RFRocketLibrary.Enum;
 using RFRocketLibrary.Events;
 using RFRocketLibrary.Utils;
@@ -10,7 +10,7 @@ using Rocket.Unturned.Chat;
 using UnityEngine;
 using Logger = Rocket.Core.Logging.Logger;
 
-namespace RFGarageClassic
+namespace RFGarage
 {
     public class Plugin : RocketPlugin<Configuration>
     {

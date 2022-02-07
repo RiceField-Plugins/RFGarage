@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
-using RFGarageClassic.Enums;
+using RFGarage.Enums;
 
-namespace RFGarageClassic.Models
+namespace RFGarage.Models
 {
     public class Blacklist
     {

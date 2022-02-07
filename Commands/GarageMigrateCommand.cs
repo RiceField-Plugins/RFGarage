@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using RFGarageClassic.DatabaseManagers;
-using RFGarageClassic.Enums;
+using RFGarage.DatabaseManagers;
+using RFGarage.Enums;
 using RFRocketLibrary.Plugins;
 
-namespace RFGarageClassic.Commands
+namespace RFGarage.Commands
 {
     [Aliases("gm")]
     [AllowedCaller(Rocket.API.AllowedCaller.Both)]
