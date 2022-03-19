@@ -18,25 +18,25 @@ namespace RFGarage.Commands
         {
             if (context.CommandRawArguments.Length != 1)
             {
-                await context.ReplyAsync(Plugin.Inst.Translate(EResponse.INVALID_PARAMETER.ToString(), Syntax));
+                await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.INVALID_PARAMETER.ToString(), Syntax));
                 return;
             }
 
             if (!Enum.TryParse<EDatabase>(context.CommandRawArguments[0], true, out var to))
             {
-                await context.ReplyAsync(Plugin.Inst.Translate(EResponse.INVALID_PARAMETER.ToString(), Syntax));
+                await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.INVALID_PARAMETER.ToString(), Syntax));
                 return;
             }
 
             if (!GarageManager.Ready)
             {
-                await context.ReplyAsync(Plugin.Inst.Translate(EResponse.DATABASE_NOT_READY.ToString()));
+                await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.DATABASE_NOT_READY.ToString()));
                 return;
             }
 
-            await context.ReplyAsync(Plugin.Inst.Translate(EResponse.MIGRATION_START.ToString(), "RFGarage Old", to));
+            await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.MIGRATION_START.ToString(), "RFGarage Old", to));
             await Plugin.Inst.Database.GarageManager.MigrateGarageAsync(to);
-            await context.ReplyAsync(Plugin.Inst.Translate(EResponse.MIGRATION_FINISH.ToString()));
+            await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.MIGRATION_FINISH.ToString()));
         }
     }
 }

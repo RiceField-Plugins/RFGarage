@@ -43,6 +43,7 @@
         <Compile Include="Enums\EBlacklistType.cs" />
         <Compile Include="Enums\EDatabase.cs" />
         <Compile Include="Enums\EResponse.cs" />
+        <Compile Include="EventListeners\ServerEvent.cs" />
         <Compile Include="EventListeners\VehicleEvent.cs" />
         <Compile Include="Models\PlayerGarage.cs" />
         <Compile Include="Plugin.cs" />
@@ -76,7 +77,7 @@
       <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
         <HintPath>..\..\..\Libraries\RFRocketMod\Newtonsoft.Json.dll</HintPath>
       </Reference>
-      <Reference Include="RFRocketLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <Reference Include="RFRocketLibrary, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null">
         <HintPath>..\..\..\Libraries\RFRocketMod\RFRocketLibrary.dll</HintPath>
       </Reference>
       <Reference Include="Rocket.API, Version=4.9.3.4, Culture=neutral, PublicKeyToken=null">

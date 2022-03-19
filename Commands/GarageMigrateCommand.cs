@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using RFGarage.DatabaseManagers;
 using RFGarage.Enums;
+using RFGarage.Utils;
 using RFRocketLibrary.Plugins;
 
 namespace RFGarage.Commands
@@ -17,32 +18,38 @@ namespace RFGarage.Commands
         {
             if (context.CommandRawArguments.Length != 2)
             {
-                await context.ReplyAsync(Plugin.Inst.Translate(EResponse.INVALID_PARAMETER.ToString(), Syntax));
+                await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.INVALID_PARAMETER.ToString(), Syntax),
+                    Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
                 return;
             }
 
             if (!Enum.TryParse<EDatabase>(context.CommandRawArguments[0], true, out var from) ||
                 !Enum.TryParse<EDatabase>(context.CommandRawArguments[1], true, out var to))
             {
-                await context.ReplyAsync(Plugin.Inst.Translate(EResponse.INVALID_PARAMETER.ToString(), Syntax));
+                await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.INVALID_PARAMETER.ToString(), Syntax),
+                    Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
                 return;
             }
 
             if (from == to)
             {
-                await context.ReplyAsync(Plugin.Inst.Translate(EResponse.SAME_DATABASE.ToString()));
+                await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.SAME_DATABASE.ToString()),
+                    Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
                 return;
             }
 
             if (!GarageManager.Ready)
             {
-                await context.ReplyAsync(Plugin.Inst.Translate(EResponse.DATABASE_NOT_READY.ToString()));
+                await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.DATABASE_NOT_READY.ToString()),
+                    Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
                 return;
             }
 
-            await context.ReplyAsync(Plugin.Inst.Translate(EResponse.MIGRATION_START.ToString(), from, to));
+            await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.MIGRATION_START.ToString(), from, to),
+                Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
             await Plugin.Inst.Database.GarageManager.MigrateAsync(from, to);
-            await context.ReplyAsync(Plugin.Inst.Translate(EResponse.MIGRATION_FINISH.ToString()));
+            await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.MIGRATION_FINISH.ToString()),
+                Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
         }
     }
 }

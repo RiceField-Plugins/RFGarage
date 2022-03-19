@@ -12,6 +12,7 @@ using Rocket.Unturned.Player;
 using SDG.Unturned;
 using UnityEngine;
 using AllowedCaller = RFRocketLibrary.Plugins.AllowedCaller;
+using ThreadUtil = RFRocketLibrary.Utils.ThreadUtil;
 using VehicleUtil = RFGarage.Utils.VehicleUtil;
 
 namespace RFGarage.Commands
@@ -27,38 +28,54 @@ namespace RFGarage.Commands
         {
             var player = (UnturnedPlayer) context.Player;
             var vehicle = player.CurrentVehicle;
+
+            if (Plugin.Inst.IsProcessingGarage.TryGetValue(player.CSteamID.m_SteamID, out var lastProcessing) && lastProcessing.HasValue && (DateTime.Now - lastProcessing.Value).TotalSeconds <= 1)
+            {
+                await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.PROCESSING_GARAGE.ToString()),
+                    Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
+                return;
+            }
+
+            Plugin.Inst.IsProcessingGarage[player.CSteamID.m_SteamID] = null;
             if (vehicle == null)
             {
                 if (!player.GetRaycastHit(Mathf.Infinity, RayMasks.VEHICLE, out var hit) ||
                     hit.transform == null || hit.transform.GetComponent<InteractableVehicle>() == null)
                 {
-                    await context.ReplyAsync(Plugin.Inst.Translate(EResponse.NO_VEHICLE_INPUT.ToString()),
-                        Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.NO_VEHICLE_INPUT.ToString()),
+                        Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
                     return;
                 }
 
                 vehicle = hit.transform.GetComponent<InteractableVehicle>();
             }
 
+            if (vehicle.isDead || vehicle.isExploded)
+            {
+                await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.NO_VEHICLE_INPUT.ToString()),
+                    Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
+                return;
+            }
+
             if (vehicle.lockedOwner.m_SteamID != player.CSteamID.m_SteamID)
             {
-                await context.ReplyAsync(Plugin.Inst.Translate(EResponse.VEHICLE_NOT_OWNED.ToString()),
-                    Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.VEHICLE_NOT_OWNED.ToString()),
+                    Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
                 return;
             }
 
             var slot = player.GetGarageSlot();
             if (Plugin.Inst.Database.GarageManager.Count(player.CSteamID.m_SteamID) >= slot)
             {
-                await context.ReplyAsync(Plugin.Inst.Translate(EResponse.GARAGE_FULL.ToString(), slot),
-                    Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.GARAGE_FULL.ToString(), slot),
+                    Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
                 return;
             }
 
             if (!Plugin.Conf.AllowTrain && vehicle.asset.engine == EEngine.TRAIN)
             {
-                await context.ReplyAsync(Plugin.Inst.Translate(EResponse.TRAIN_NOT_ALLOWED.ToString()),
-                    Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.TRAIN_NOT_ALLOWED.ToString()),
+                    Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
                 return;
             }
 
@@ -67,8 +84,8 @@ namespace RFGarage.Commands
                 x.IdList.Contains(vehicle.id)))
             {
                 await context.ReplyAsync(
-                    Plugin.Inst.Translate(EResponse.BLACKLIST_VEHICLE.ToString(), vehicle.asset.vehicleName,
-                        vehicle.asset.id), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                    VehicleUtil.TranslateRich(EResponse.BLACKLIST_VEHICLE.ToString(), vehicle.asset.vehicleName,
+                        vehicle.asset.id), Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
                 return;
             }
 
@@ -82,9 +99,8 @@ namespace RFGarage.Commands
                 foreach (var drop in region.drops.Where(drop => blacklist.IdList.Contains(drop.asset.id)))
                 {
                     await context.ReplyAsync(
-                        Plugin.Inst.Translate(EResponse.BLACKLIST_BARRICADE.ToString(), drop.asset.itemName,
-                            drop.asset.id),
-                        Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                        VehicleUtil.TranslateRich(EResponse.BLACKLIST_BARRICADE.ToString(), drop.asset.itemName,
+                            drop.asset.id), Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
                     return;
                 }
             }
@@ -105,9 +121,8 @@ namespace RFGarage.Commands
                         select AssetUtil.GetItemAsset(id))
                     {
                         await context.ReplyAsync(
-                            Plugin.Inst.Translate(EResponse.BLACKLIST_ITEM.ToString(),
-                                asset.itemName, asset.id),
-                            Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                            VehicleUtil.TranslateRich(EResponse.BLACKLIST_ITEM.ToString(),
+                                asset.itemName, asset.id), Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
                         return;
                     }
                 }
@@ -123,8 +138,8 @@ namespace RFGarage.Commands
                         where blacklist.IdList.Contains(itemJar.item.id)
                         select AssetUtil.GetItemAsset(itemJar.item.id))
                     {
-                        await context.ReplyAsync(Plugin.Inst.Translate(EResponse.BLACKLIST_ITEM.ToString(),
-                            asset.itemName, asset.id), Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                        await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.BLACKLIST_ITEM.ToString(),
+                            asset.itemName, asset.id), Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
                         return;
                     }
                 }
@@ -132,6 +147,7 @@ namespace RFGarage.Commands
 
             vehicle.forceRemoveAllPlayers();
             string vehicleName;
+            Plugin.Inst.IsProcessingGarage[player.CSteamID.m_SteamID] = DateTime.Now;
             if (context.CommandRawArguments.Length == 0)
             {
                 vehicleName = vehicle.asset.vehicleName;
@@ -142,10 +158,13 @@ namespace RFGarage.Commands
                     GarageContent = VehicleWrapper.Create(vehicle),
                     LastUpdated = DateTime.Now,
                 });
-                VehicleUtil.ClearItems(vehicle);
-                VehicleManager.askVehicleDestroy(vehicle);
-                await context.ReplyAsync(Plugin.Inst.Translate(EResponse.GARAGE_ADDED.ToString(), vehicleName),
-                    Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+                await ThreadUtil.RunOnGameThreadAsync(() =>
+                {
+                    VehicleUtil.ClearItems(vehicle);
+                    VehicleManager.askVehicleDestroy(vehicle);
+                });
+                await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.GARAGE_ADDED.ToString(), vehicleName),
+                    Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
                 return;
             }
 
@@ -157,10 +176,13 @@ namespace RFGarage.Commands
                 GarageContent = VehicleWrapper.Create(vehicle),
                 LastUpdated = DateTime.Now,
             });
-            VehicleUtil.ClearItems(vehicle);
-            VehicleManager.askVehicleDestroy(vehicle);
-            await context.ReplyAsync(Plugin.Inst.Translate(EResponse.GARAGE_ADDED.ToString(), vehicleName),
-                Plugin.MsgColor, Plugin.Conf.AnnouncerIconUrl);
+            await ThreadUtil.RunOnGameThreadAsync(() =>
+            {
+                VehicleUtil.ClearItems(vehicle);
+                VehicleManager.askVehicleDestroy(vehicle);
+            });
+            await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.GARAGE_ADDED.ToString(), vehicleName),
+                Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
         }
     }
 }

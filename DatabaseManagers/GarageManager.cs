@@ -342,7 +342,7 @@ namespace RFGarage.DatabaseManagers
                             new MySql.Data.MySqlClient.MySqlConnection(DatabaseManager.MySql_ConnectionString))
                         {
                             var query =
-                                $"SELECT COUNT(`InstanceId`) FROM `{MySql_TableName}` WHERE `SteamId` = @SteamId;";
+                                $"SELECT COUNT(`Id`) FROM `{MySql_TableName}` WHERE `SteamId` = @SteamId;";
                             return Dapper.SqlMapper.ExecuteScalar<int>(connection, query, new {SteamId = steamId});
                         }
                     default:

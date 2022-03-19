@@ -20,6 +20,7 @@
         VEHICLE_NOT_FOUND,
         GARAGE_RETRIEVE,
         GARAGE_SLOT,
-        VEHICLE_DROWN
+        VEHICLE_DROWN,
+        PROCESSING_GARAGE
     }
 }

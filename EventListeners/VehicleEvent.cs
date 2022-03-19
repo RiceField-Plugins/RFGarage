@@ -12,9 +12,9 @@ using VehicleUtil = RFGarage.Utils.VehicleUtil;
 
 namespace RFGarage.EventListeners
 {
-    public static class VehicleEvent
+    internal static class VehicleEvent
     {
-        public static void OnExploded(InteractableVehicle vehicle)
+        internal static void OnExploded(InteractableVehicle vehicle)
         {
             if (!Plugin.Conf.AutoClearDestroyedVehicles)
                 return;
@@ -22,15 +22,20 @@ namespace RFGarage.EventListeners
             VehicleManager.askVehicleDestroy(vehicle);
         }
 
-        public static void OnPreVehicleDestroyed(InteractableVehicle vehicle)
+        internal static void OnPreVehicleDestroyed(InteractableVehicle vehicle)
         {
+            if (vehicle == null)
+                return;
+            
             if (!vehicle.isDrowned || vehicle.lockedOwner == CSteamID.Nil || vehicle.lockedOwner.m_SteamID == 0)
                 return;
+            
             var rPlayer = new RocketPlayer(vehicle.lockedOwner.ToString());
             if (!rPlayer.HasPermission(Plugin.Conf.AutoAddOnDrownPermission) ||
                 Plugin.Inst.Database.GarageManager.Count(vehicle.lockedOwner.m_SteamID) >=
                 rPlayer.GetGarageSlot()) 
                 return;
+            
             var task = Task.Run(async () => await Plugin.Inst.Database.GarageManager.AddAsync(new PlayerGarage
             {
                 VehicleName = vehicle.asset.vehicleName,
@@ -41,7 +46,8 @@ namespace RFGarage.EventListeners
             task.Wait();
             VehicleUtil.ClearItems(vehicle);
             if (PlayerTool.getPlayer(vehicle.lockedOwner) != null)
-                ChatHelper.Say(rPlayer, Plugin.Inst.Translate(EResponse.VEHICLE_DROWN.ToString(), vehicle.asset.vehicleName));
+                ChatHelper.Say(rPlayer, VehicleUtil.TranslateRich(EResponse.VEHICLE_DROWN.ToString(), vehicle.asset.vehicleName),
+                    Plugin.MsgColor, Plugin.Conf.MessageIconUrl);
         }
     }
 }

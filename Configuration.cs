@@ -11,7 +11,7 @@ namespace RFGarage
         public EDatabase Database;
         public string MySqlConnectionString;
         public string MessageColor;
-        public string AnnouncerIconUrl;
+        public string MessageIconUrl;
         public bool AutoClearDestroyedVehicles;
         public bool AutoAddOnDrown;
         public string AutoAddOnDrownPermission;
@@ -22,11 +22,11 @@ namespace RFGarage
         
         public void LoadDefaults()
         {
-            Enabled = false;
+            Enabled = true;
             Database = EDatabase.LITEDB;
             MySqlConnectionString = "SERVER=127.0.0.1;DATABASE=unturned;UID=root;PASSWORD=123456;PORT=3306;TABLENAME=rfgarage;";
             MessageColor = "magenta";
-            AnnouncerIconUrl = "https://i.imgur.com/3KlgN14.png";
+            MessageIconUrl = "https://cdn.jsdelivr.net/gh/RiceField-Plugins/UnturnedImages@images/plugin/Announcer.png";
             AutoClearDestroyedVehicles = true;
             AutoAddOnDrown = true;
             AutoAddOnDrownPermission = "garagedrown";

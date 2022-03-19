@@ -1,4 +1,6 @@
-﻿using RFGarage.DatabaseManagers;
+﻿using System;
+using System.Collections.Generic;
+using RFGarage.DatabaseManagers;
 using RFGarage.Enums;
 using RFGarage.EventListeners;
 using RFRocketLibrary.Enum;
@@ -7,6 +9,7 @@ using RFRocketLibrary.Utils;
 using Rocket.API.Collections;
 using Rocket.Core.Plugins;
 using Rocket.Unturned.Chat;
+using SDG.Unturned;
 using UnityEngine;
 using Logger = Rocket.Core.Logging.Logger;
 
@@ -16,13 +19,15 @@ namespace RFGarage
     {
         private static int Major = 1;
         private static int Minor = 0;
-        private static int Patch = 0;
+        private static int Patch = 5;
 
         public static Plugin Inst;
         public static Configuration Conf;
+
         internal static Color MsgColor;
         public DatabaseManager Database;
-
+        
+        internal Dictionary<ulong, DateTime?> IsProcessingGarage;
         protected override void Load()
         {
             Inst = this;
@@ -61,15 +66,20 @@ namespace RFGarage
                 
                 EventBus.Load();
 
+                Level.onPostLevelLoaded += ServerEvent.OnPostLeveLoaded;
                 UnturnedEvent.OnVehicleExploded += VehicleEvent.OnExploded;
                 if (Conf.AutoAddOnDrown)
                     UnturnedEvent.OnPreVehicleDestroyed += VehicleEvent.OnPreVehicleDestroyed;
+                
+                if (Level.isLoaded)
+                    ServerEvent.OnPostLeveLoaded(0);
+                    
             }
             else
                 Logger.LogError($"[{Name}] Plugin: DISABLED");
 
             Logger.LogWarning($"[{Name}] Plugin loaded successfully!");
-            Logger.LogWarning($"[{Name}] RFGarage v{Major}.{Minor}.{Patch}");
+            Logger.LogWarning($"[{Name}] {Name} v{Major}.{Minor}.{Patch}");
             Logger.LogWarning($"[{Name}] Made with 'rice' by RiceField Plugins!");
         }
 
@@ -112,6 +122,7 @@ namespace RFGarage
                 {$"{EResponse.GARAGE_SLOT}", "Current garage slot: {0}/{1}"},
                 {$"{EResponse.GARAGE_LIST}", "#{0} {1} [Vehicle ID: {2} Vehicle Name: {3}]"},
                 {$"{EResponse.VEHICLE_DROWN}", "Your drowned {0} has been added to your garage automatically!"},
+                {$"{EResponse.PROCESSING_GARAGE}", "Please wait! We are still processing your previous garage request!"},
             };
     }
 }
