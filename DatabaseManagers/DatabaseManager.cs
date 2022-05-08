@@ -1,11 +1,13 @@
 using System;
 using System.IO;
 using RFGarage.Enums;
+using RFRocketLibrary.API.Interfaces;
+using RFRocketLibrary.Models;
 using Rocket.Core.Logging;
 
 namespace RFGarage.DatabaseManagers
 {
-    public class DatabaseManager
+    public static class DatabaseManager
     {
         private static readonly string LiteDB_FileName = "garage.db";
         internal static readonly string LiteDB_FilePath = Path.Combine(Plugin.Inst.Directory, LiteDB_FileName);
@@ -14,12 +16,13 @@ namespace RFGarage.DatabaseManagers
         internal static string MySql_ConnectionString;
         internal static string MySql_TableName;
         
-        internal readonly GarageManager GarageManager;
+        internal static ISerialQueue Queue;
         
-        internal DatabaseManager()
+        internal static void Initialize()
         {
             try
             {
+                Queue = new SerialQueue();
                 if (Plugin.Conf.Database == EDatabase.MYSQL)
                 {
                     var index = Plugin.Conf.MySqlConnectionString.LastIndexOf("TABLENAME", StringComparison.Ordinal);
@@ -36,8 +39,6 @@ namespace RFGarage.DatabaseManagers
                         MySql_ConnectionString = Plugin.Conf.MySqlConnectionString.Remove(index);
                     }
                 }
-                
-                GarageManager = new GarageManager();
             }
             catch (Exception e)
             {
