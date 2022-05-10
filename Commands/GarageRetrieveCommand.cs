@@ -14,7 +14,11 @@ namespace RFGarage.Commands
 {
     [CommandActor(Rocket.API.AllowedCaller.Player)]
     [CommandPermissions("garageretrieve")]
+#if RELEASEPUNCH
+    [CommandAliases("vs")]
+#else
     [CommandAliases("gret", "gr")]
+#endif
     [CommandInfo("Retrieve vehicle from garage.", "/garageretrieve <vehicleName>", AllowSimultaneousCalls = false)]
     public class GarageRetrieveCommand : RocketCommand
     {

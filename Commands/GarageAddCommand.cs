@@ -20,7 +20,11 @@ namespace RFGarage.Commands
 {
     [CommandActor(AllowedCaller.Player)]
     [CommandPermissions("garageadd")]
+#if RELEASEPUNCH
+    [CommandAliases("vc")]
+#else
     [CommandAliases("gadd", "ga")]
+#endif
     [CommandInfo("Store vehicle to garage.", "/garageadd [vehicleName]", AllowSimultaneousCalls = false)]
     public class GarageAddCommand : RocketCommand
     {

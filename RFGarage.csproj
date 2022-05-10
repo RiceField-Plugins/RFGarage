@@ -32,6 +32,13 @@
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleasePunch|AnyCPU' ">
+      <OutputPath>bin\ReleasePunch\</OutputPath>
+      <DefineConstants>RELEASEPUNCH</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release +|AnyCPU' ">
+      <OutputPath>bin\Release +\</OutputPath>
+    </PropertyGroup>
     <ItemGroup>
         <Compile Include="Commands\GarageAddCommand.cs" />
         <Compile Include="Commands\GarageMigrateCommand.cs" />
@@ -43,9 +50,11 @@
         <Compile Include="Enums\EBlacklistType.cs" />
         <Compile Include="Enums\EDatabase.cs" />
         <Compile Include="Enums\EResponse.cs" />
+        <Compile Include="EventListeners\PlayerEvent.cs" />
         <Compile Include="EventListeners\ServerEvent.cs" />
         <Compile Include="EventListeners\VehicleEvent.cs" />
         <Compile Include="Models\PlayerGarage.cs" />
+        <Compile Include="PlayerComponent.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Models\Blacklist.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
@@ -71,7 +80,7 @@
       <Reference Include="litedbasync, Version=0.0.11.0, Culture=neutral, PublicKeyToken=null">
         <HintPath>..\..\..\Libraries\LiteDB\litedbasync.dll</HintPath>
       </Reference>
-      <Reference Include="MySql.Data, Version=8.0.25.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d">
+      <Reference Include="MySql.Data">
         <HintPath>..\..\..\Libraries\MySQL\MySql.Data.dll</HintPath>
       </Reference>
       <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">

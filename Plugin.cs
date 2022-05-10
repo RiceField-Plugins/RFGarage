@@ -44,9 +44,12 @@ namespace RFGarage
                 DependencyUtil.Load(EDependency.LiteDB);
                 DependencyUtil.Load(EDependency.LiteDBAsync);
                 DependencyUtil.Load(EDependency.Dapper);
+                DependencyUtil.Load(EDependency.I18N);
+                DependencyUtil.Load(EDependency.I18NWest);
                 DependencyUtil.Load(EDependency.MySqlData);
                 DependencyUtil.Load(EDependency.SystemManagement);
                 DependencyUtil.Load(EDependency.UbietyDnsCore);
+                DependencyUtil.Load(EDependency.ZstdNet);
 
                 DatabaseManager.Initialize();
                 GarageManager.Initialize();

@@ -11,7 +11,11 @@ using RocketExtensions.Plugins;
 namespace RFGarage.Commands
 {
     [CommandActor(AllowedCaller.Player)]
+#if RELEASEPUNCH
+    [CommandAliases("vl")]
+#else
     [CommandAliases("gg")]
+#endif
     [CommandPermissions("garages")]
     [CommandInfo("Get a list of vehicle in garage.", "/garages")]
     public class GaragesCommand : RocketCommand
