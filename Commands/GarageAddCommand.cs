@@ -159,37 +159,13 @@ namespace RFGarage.Commands
             }
 
             await ThreadTool.RunOnGameThreadAsync(() => { vehicle.forceRemoveAllPlayers(); });
-            string vehicleName;
             RFGarage.Plugin.Inst.IsProcessingGarage[player.CSteamID.m_SteamID] = DateTime.Now;
-            VehicleWrapper garageContent;
-            if (context.CommandRawArguments.Length == 0)
-            {
-                vehicleName = vehicle.asset.vehicleName;
-                garageContent = VehicleWrapper.Create(vehicle);
-                await ThreadTool.RunOnGameThreadAsync(() =>
-                {
-                    VehicleUtil.ClearItems(vehicle);
-                    VehicleManager.askVehicleDestroy(vehicle);
-                });
-                await DatabaseManager.Queue.Enqueue(async () =>
-                    await GarageManager.AddAsync(new PlayerGarage
-                    {
-                        SteamId = player.CSteamID.m_SteamID,
-                        VehicleName = vehicleName,
-                        GarageContent = garageContent,
-                        LastUpdated = DateTime.Now,
-                    })
-                )!;
-                await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.GARAGE_ADDED.ToString(), vehicleName),
-                    RFGarage.Plugin.MsgColor, RFGarage.Plugin.Conf.MessageIconUrl);
-                return;
-            }
-
-            vehicleName = string.Join(" ", context.CommandRawArguments);
-            garageContent = VehicleWrapper.Create(vehicle);
+            RFGarage.Plugin.Inst.BusyVehicle.Add(vehicle.instanceID);
+            var vehicleName = context.CommandRawArguments.Length == 0 ? vehicle.asset.vehicleName : string.Join(" ", context.CommandRawArguments);
+            var garageContent = VehicleWrapper.Create(vehicle);
             await ThreadTool.RunOnGameThreadAsync(() =>
             {
-                VehicleUtil.ClearItems(vehicle);
+                VehicleUtil.ClearTrunkAndBarricades(vehicle);
                 VehicleManager.askVehicleDestroy(vehicle);
             });
             await DatabaseManager.Queue.Enqueue(async () =>
@@ -201,8 +177,10 @@ namespace RFGarage.Commands
                     LastUpdated = DateTime.Now,
                 })
             )!;
+            RFGarage.Plugin.Inst.BusyVehicle.Remove(vehicle.instanceID);
             await context.ReplyAsync(VehicleUtil.TranslateRich(EResponse.GARAGE_ADDED.ToString(), vehicleName),
                 RFGarage.Plugin.MsgColor, RFGarage.Plugin.Conf.MessageIconUrl);
+            return;
         }
     }
 }

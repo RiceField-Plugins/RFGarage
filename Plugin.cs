@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using RFGarage.DatabaseManagers;
 using RFGarage.Enums;
 using RFGarage.EventListeners;
@@ -9,10 +8,8 @@ using RFRocketLibrary.Enum;
 using RFRocketLibrary.Events;
 using RFRocketLibrary.Utils;
 using Rocket.API.Collections;
-using Rocket.Core.Plugins;
 using Rocket.Unturned.Chat;
 using RocketExtensions.Plugins;
-using RocketExtensions.Utilities;
 using SDG.Unturned;
 using UnityEngine;
 using Logger = Rocket.Core.Logging.Logger;
@@ -23,12 +20,13 @@ namespace RFGarage
     {
         private static int Major = 1;
         private static int Minor = 1;
-        private static int Patch = 0;
+        private static int Patch = 4;
 
         public static Plugin Inst;
         public static Configuration Conf;
         internal static Color MsgColor;
         internal Dictionary<ulong, DateTime?> IsProcessingGarage;
+        internal HashSet<uint> BusyVehicle;
 
         protected override void Load()
         {
@@ -83,7 +81,9 @@ namespace RFGarage
                     UnturnedPatchEvent.OnPreVehicleDestroyed -= VehicleEvent.OnPreVehicleDestroyed;
 
                 Library.DetachEvent(true);
+#if RF
                 Library.Uninitialize();
+                #endif
             }
 
             Conf = null;

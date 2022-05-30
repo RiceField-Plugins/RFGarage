@@ -36,6 +36,10 @@
       <OutputPath>bin\ReleasePunch\</OutputPath>
       <DefineConstants>RELEASEPUNCH</DefineConstants>
     </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'RF|AnyCPU' ">
+      <OutputPath>bin\RF\</OutputPath>
+      <DefineConstants>RF</DefineConstants>
+    </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release +|AnyCPU' ">
       <OutputPath>bin\Release +\</OutputPath>
     </PropertyGroup>
